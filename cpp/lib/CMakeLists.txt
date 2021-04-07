@@ -1,0 +1,3 @@
+add_subdirectory(window)
+add_subdirectory(control)
+add_subdirectory(imagesearch)
