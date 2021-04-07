@@ -1,0 +1,1 @@
+echo wake %date% %time% >> wake.log
