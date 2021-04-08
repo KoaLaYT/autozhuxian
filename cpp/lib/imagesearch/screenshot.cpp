@@ -47,7 +47,8 @@ cv::Mat screenshot_region(HWND hwnd, ScreenshotRegion region)
 
     // copy from the window device context to the bitmap device context
     StretchBlt(hMemoryDC, 0, 0, region.width, region.height,
-               hWindowDC, region.top, region.left, region.width, region.height, SRCCOPY);          //change SRCCOPY to NOTSRCCOPY for wacky colors !
+               hWindowDC, region.left, region.top, region.width, region.height,
+               SRCCOPY);                                                                           //change SRCCOPY to NOTSRCCOPY for wacky colors !
     GetDIBits(hMemoryDC, hbwindow, 0, region.height, src.data, (BITMAPINFO*)&bi, DIB_RGB_COLORS);  //copy from hMemoryDC to hbwindow
 
     // avoid memory leak

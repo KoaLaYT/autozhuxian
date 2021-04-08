@@ -19,6 +19,11 @@ struct ScreenshotRegion {
         return ScreenshotRegion{top, left, width / 2, height};
     }
 
+    ScreenshotRegion left_bottom()
+    {
+        return ScreenshotRegion{top + height / 2, left, width / 2, height / 2};
+    }
+
     ScreenshotRegion(int t, int l, int w, int h) : top{t},
                                                    left{l},
                                                    width{w},

@@ -37,4 +37,8 @@ static void click()
 
 TEST(windows_api, wchar)
 {
+    HWND desktop = GetDesktopWindow();
+    RECT rect;
+    GetClientRect(desktop, &rect);
+    std::printf("%d X %d\n", rect.right - rect.left, rect.bottom - rect.top);
 }

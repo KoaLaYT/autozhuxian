@@ -28,7 +28,7 @@ namespace autozhuxian {
 
 cv::Point match_template(const cv::Mat& source,
                          const cv::Mat& templ,
-                         int method = cv::TM_SQDIFF)
+                         int method)
 {
     return impl::match_template(source, templ, cv::Mat(), method);
 }
@@ -36,7 +36,7 @@ cv::Point match_template(const cv::Mat& source,
 cv::Point match_template_with_mask(const cv::Mat& source,
                                    const cv::Mat& templ,
                                    const cv::Mat& mask,
-                                   int method = cv::TM_SQDIFF)
+                                   int method)
 {
     // TODO 替换assert
     assert(method == cv::TM_SQDIFF || method == cv::TM_CCORR_NORMED);
