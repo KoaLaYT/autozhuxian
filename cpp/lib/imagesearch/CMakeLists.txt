@@ -1,4 +1,4 @@
-add_library(imagesearch screenshot.cpp)
+add_library(imagesearch screenshot.cpp match.cpp)
 
 target_include_directories(imagesearch PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
