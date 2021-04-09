@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 3.18)
 
-set(ENV{VCPKG_ROOT} "C:\\Users\\koalayt\\Documents")
+set(ENV{VCPKG_ROOT} "/Users/koalayt")
+# set(ENV{VCPKG_ROOT} "C:\\Users\\koalayt\\Documents")
 set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/vcpkg/scripts/buildsystems/vcpkg.cmake"
     CACHE STRING "")
 
 project(cpp-tests)
+
+set(CMAKE_CXX_STANDARD 17)
 
 # add_definitions(-DPSAPI_VERSION=1)
 
