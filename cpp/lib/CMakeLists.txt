@@ -1,3 +1,4 @@
 add_subdirectory(window)
 add_subdirectory(control)
 add_subdirectory(imagesearch)
+add_subdirectory(task)

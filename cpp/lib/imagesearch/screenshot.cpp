@@ -26,7 +26,7 @@ static BITMAPINFOHEADER create_bitmap_header(int width, int height)
 
 namespace autozhuxian {
 
-cv::Mat screenshot_region(HWND hwnd, ScreenshotRegion region)
+cv::Mat screenshot_region(HWND hwnd, RegionOfInterest roi)
 {
     cv::Mat src;
 
@@ -36,20 +36,20 @@ cv::Mat screenshot_region(HWND hwnd, ScreenshotRegion region)
     SetStretchBltMode(hMemoryDC, COLORONCOLOR);
 
     // create mat object
-    src.create(region.height, region.width, CV_8UC4);
+    src.create(roi.height, roi.width, CV_8UC4);
 
     // create a bitmap
-    HBITMAP hbwindow = CreateCompatibleBitmap(hWindowDC, region.width, region.height);
-    BITMAPINFOHEADER bi = impl::create_bitmap_header(region.width, region.height);
+    HBITMAP hbwindow = CreateCompatibleBitmap(hWindowDC, roi.width, roi.height);
+    BITMAPINFOHEADER bi = impl::create_bitmap_header(roi.width, roi.height);
 
     // use the previously created device context with the bitmap
     SelectObject(hMemoryDC, hbwindow);
 
     // copy from the window device context to the bitmap device context
-    StretchBlt(hMemoryDC, 0, 0, region.width, region.height,
-               hWindowDC, region.left, region.top, region.width, region.height,
-               SRCCOPY);                                                                           //change SRCCOPY to NOTSRCCOPY for wacky colors !
-    GetDIBits(hMemoryDC, hbwindow, 0, region.height, src.data, (BITMAPINFO*)&bi, DIB_RGB_COLORS);  //copy from hMemoryDC to hbwindow
+    StretchBlt(hMemoryDC, 0, 0, roi.width, roi.height,
+               hWindowDC, roi.x, roi.y, roi.width, roi.height,
+               SRCCOPY);                                                                        //change SRCCOPY to NOTSRCCOPY for wacky colors !
+    GetDIBits(hMemoryDC, hbwindow, 0, roi.height, src.data, (BITMAPINFO*)&bi, DIB_RGB_COLORS);  //copy from hMemoryDC to hbwindow
 
     // avoid memory leak
     DeleteObject(hbwindow);

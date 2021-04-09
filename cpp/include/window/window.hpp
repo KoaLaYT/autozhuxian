@@ -6,6 +6,9 @@
 
 #include <optional>
 #include <string>
+#include <stdexcept>
+
+#include <task/task.hpp>
 
 namespace autozhuxian {
 
@@ -24,12 +27,34 @@ public:
         }
     }
 
+    HWND handle() { return m_handle; }
+
+    /**
+     * // TODO
+     * @brief 
+     * 
+     * @param process 
+     * @return true 
+     * @return false 
+     */
+    bool run(Process& process);
+
     // TODO add more useful methods
 
 private:
     std::string m_title;       // 窗口标题
     HWND m_handle;             // 窗口handle
     WINDOWINFO m_window_info;  // 窗口信息
+
+    int rect_height(RECT& rect) { return rect.bottom - rect.top; }
+
+    int window_cap_border_height()
+    {
+        int win_height = rect_height(m_window_info.rcWindow);
+        int cli_height = rect_height(m_window_info.rcClient);
+
+        return win_height - cli_height - m_window_info.cyWindowBorders;
+    }
 };
 
 /**

@@ -1,47 +1,114 @@
+#include <cstdio>
+#include <thread>
+#include <vector>
+
 #include <window/window.hpp>
 #include <control/control.hpp>
 #include <imagesearch/screenshot.hpp>
 #include <imagesearch/match.hpp>
-#include <cstdio>
-#include <thread>
+#include <task/task.hpp>
 
-#define BASE "C:\\Users\\koalayt\\Desktop\\autozhuxian\\assets\\"
+#define BASE "C:\\Users\\koalayt\\Desktop\\autozhuxian\\assets\\login\\"
 #define PATH(p) BASE p
 
 using namespace std::chrono_literals;
 
 // TODO remove duplicate logic
-static void open_platform();
-static void start_game(HWND hwnd);
-static void select_server(HWND hwnd);
-static void enter_game(HWND hwnd);
-static autozhuxian::ScreenshotRegion get_window_region(HWND hwnd);
-static autozhuxian::ScreenshotRegion get_window_position(HWND hwnd);
+// static void open_platform();
+// static void start_game(HWND hwnd);
+
+struct WindowManager {
+    using ZXWindow = autozhuxian::Window;
+
+    std::vector<ZXWindow> windows;
+
+    static BOOL CALLBACK EnumWindowCb(HWND hwnd, LPARAM lParam)
+    {
+        CHAR title[1024];
+        int length = GetWindowTextA(hwnd, title, sizeof(title));
+
+        // 有的无窗口应用还是会有hwnd，在这里过滤掉
+        if (!IsWindowVisible(hwnd) ||
+            length == 0 ||
+            std::strcmp(title, "Program Manager") == 0) {
+            return TRUE;
+        }
+
+        std::vector<ZXWindow>& result = *reinterpret_cast<std::vector<ZXWindow>*>(lParam);
+        if (std::strcmp(title, "诛仙3") == 0) {
+            std::printf("找到一个诛仙窗口\n");
+            result.push_back(ZXWindow{"诛仙3", hwnd});
+        }
+
+        return TRUE;
+    }
+
+    WindowManager()
+    {
+        EnumWindows(EnumWindowCb, reinterpret_cast<LPARAM>(&windows));
+    }
+};
 
 int main()
 {
-    char* platform = "完美游戏平台";
-    HWND platform_hwnd = autozhuxian::find_window(platform);
-    if (!platform_hwnd) {
-        std::printf("未找到窗口，尝试打开窗口\n");
-        open_platform();
-        return main();
-    }
-    std::printf("完美游戏平台已打开\n");
-    start_game(platform_hwnd);
-    std::printf("诛仙已开始\n");
+    std::vector<autozhuxian::Process> task{
+        {
+            "寻找服务器",
+            {400, 0, 800, 1024},
+            PATH("server.png"),
+            NULL,
+            0,
+            nullptr,
+        },
+        {
+            "选择服务器",
+            {400, 0, 800, 1024},
+            PATH("confirm.png"),
+            NULL,
+            10'000,  // 人物有个动画效果
+            nullptr,
+        },
+        {
+            "进入游戏",
+            {400, 512, 800, 512},
+            PATH("enter.png"),
+            PATH("enter_mask.png"),
+            10'000,
+            nullptr,
+        },
+    };
 
-    HWND zhuxian_hwnd = autozhuxian::find_window("诛仙3");
-    if (!zhuxian_hwnd) {
-        // ???
-        return 1;
+    // char* platform = "完美游戏平台";
+    // auto platform_hwnd = autozhuxian::find_window(platform);
+    // if (!platform_hwnd) {
+    //     std::printf("未找到窗口，尝试打开窗口\n");
+    //     return 1;
+    //     open_platform();
+    //     return main();
+    // }
+    // std::printf("完美游戏平台已打开\n");
+    // start_game(platform_hwnd);
+    std::printf("诛仙已开始\n");
+    WindowManager wm;
+
+    for (auto& win : wm.windows) {
+        // 切换窗口，等待界面刷新
+        SetForegroundWindow(win.handle());
+        std::this_thread::sleep_for(1000ms);
+
+        for (auto& proc : task) {
+            if (!win.run(proc)) {
+                std::printf("子流程%s失败\n", proc.name);
+                //TODO back to last process
+            }
+            // TODO proc.confirm
+        }
     }
-    select_server(zhuxian_hwnd);
-    enter_game(zhuxian_hwnd);
 
     return 0;
 }
 
+/*
 static void open_platform()
 {
     autozhuxian::press(VK_LWIN);
@@ -134,3 +201,4 @@ static autozhuxian::ScreenshotRegion get_window_position(HWND hwnd)
     GetWindowRect(hwnd, &window_rect);
     return autozhuxian::ScreenshotRegion{window_rect};
 }
+*/
