@@ -46,9 +46,9 @@ public:
     std::optional<cv::Point> search_with_mask(const cv::Mat& templ, const cv::Mat& mask);
 
 private:
-    const cv::Mat& m_source;      // 待搜索源图片
-    int            m_method;      // current only support cv::TM_SQDIFF_NORMED
-    double         m_confidence;  // 置信度
+    const cv::Mat& m_source;  // 待搜索源图片
+    int m_method;             // current only support cv::TM_SQDIFF_NORMED
+    double m_confidence;      // 置信度
 };
 
 };  // namespace autozhuxian

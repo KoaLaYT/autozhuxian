@@ -17,6 +17,9 @@ struct RegionOfInterest {
     int y;
     int width;
     int height;
+
+    static RegionOfInterest from_hwnd(HWND hwnd);
+    static RegionOfInterest from_rect(RECT rect);
 };
 
 /**

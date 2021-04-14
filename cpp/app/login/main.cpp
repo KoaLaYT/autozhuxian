@@ -14,7 +14,7 @@
 using namespace std::chrono_literals;
 
 // TODO remove duplicate logic
-// static void open_platform();
+static void open_platform();
 // static void start_game(HWND hwnd);
 
 struct WindowManager {
@@ -78,56 +78,62 @@ int main()
         },
     };
 
-    // char* platform = "完美游戏平台";
-    // auto platform_hwnd = autozhuxian::find_window(platform);
-    // if (!platform_hwnd) {
-    //     std::printf("未找到窗口，尝试打开窗口\n");
-    //     return 1;
-    //     open_platform();
-    //     return main();
-    // }
-    // std::printf("完美游戏平台已打开\n");
-    // start_game(platform_hwnd);
-    std::printf("诛仙已开始\n");
-    WindowManager wm;
-
-    for (auto& win : wm.windows) {
-        // 切换窗口，等待界面刷新
-        SetForegroundWindow(win.handle());
-        std::this_thread::sleep_for(1000ms);
-
-        for (auto& proc : task) {
-            if (!win.run(proc)) {
-                std::printf("子流程%s失败\n", proc.name);
-                //TODO back to last process
-            }
-            // TODO proc.confirm
-        }
+    char* platform = "完美游戏平台";
+    char* platform_subwin = "游戏多开";
+    auto platform_hwnd = autozhuxian::find_window(platform);
+    if (!platform_hwnd) {
+        std::printf("未找到窗口，尝试打开窗口\n");
+        open_platform();
+        return main();
     }
+    std::printf("完美游戏平台已打开\n");
+    // start_game(platform_hwnd);
+    // std::printf("诛仙已开始\n");
+    // WindowManager wm;
+
+    // for (auto& win : wm.windows) {
+    //     // 切换窗口，等待界面刷新
+    //     SetForegroundWindow(win.handle());
+    //     std::this_thread::sleep_for(1000ms);
+
+    //     for (auto& proc : task) {
+    //         if (!win.run(proc)) {
+    //             std::printf("子流程%s失败\n", proc.name);
+    //             //TODO back to last process
+    //         }
+    //         // TODO proc.confirm
+    //     }
+    // }
 
     return 0;
 }
 
-/*
 static void open_platform()
 {
     autozhuxian::press(VK_LWIN);
     // waiting for the window shows
     std::this_thread::sleep_for(2000ms);
+    autozhuxian::move(0, 0);
 
     HWND desktop_hwnd = GetDesktopWindow();
-    auto desktop_region = get_window_region(desktop_hwnd);
-    cv::Mat source = autozhuxian::screenshot_region(desktop_hwnd, desktop_region.left_bottom());
-    cv::Mat platform_icon = cv::imread(PATH("login\\wanmei_platform.png"), cv::IMREAD_UNCHANGED);
-    cv::Point location = autozhuxian::match_template(source, platform_icon);
+    cv::Mat source = autozhuxian::screenshot_region(desktop_hwnd,
+                                                    autozhuxian::RegionOfInterest::from_hwnd(desktop_hwnd));
+    cv::Mat platform_icon = cv::imread(PATH("wanmei_platform.png"), cv::IMREAD_UNCHANGED);
 
-    autozhuxian::click(location.x + platform_icon.rows / 2,
-                       location.y + desktop_region.height / 2 + platform_icon.cols / 2);
+    autozhuxian::Matcher matcher{source};
+    auto location = matcher.search(platform_icon);
+    if (!location) {
+        throw std::runtime_error{"未找到完美游戏平台icon"};
+    }
+
+    autozhuxian::click(location->x + platform_icon.rows / 2,
+                       location->y + platform_icon.cols / 2);
 
     // waiting for the window shows
-    std::this_thread::sleep_for(5000ms);
+    std::this_thread::sleep_for(10'000ms);
 }
 
+/*
 static void start_game(HWND hwnd)
 {
     SetForegroundWindow(hwnd);
