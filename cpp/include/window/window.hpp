@@ -28,6 +28,7 @@ public:
     }
 
     HWND handle() { return m_handle; }
+    WINDOWINFO window_info() { return m_window_info; }
 
     /**
      * // TODO
@@ -59,6 +60,11 @@ private:
 
 /**
  * @brief 根据标题找到对应的窗口信息
+ * 
+ * 标题大于title也算符合
+ * 例如，title = 诛仙
+ * 则，能找到的窗口标题：诛仙、诛仙3、
+ * 123诛仙 不符合
  * 
  * @param title 窗口标题
  * @return std::optional<Window> 

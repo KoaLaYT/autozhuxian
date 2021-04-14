@@ -35,7 +35,7 @@ static BOOL CALLBACK EnumWindowCb(HWND hwnd, LPARAM lParam)
     }
 
     auto result = reinterpret_cast<FindWindowResult*>(lParam);
-    if (std::strcmp(title, result->title) == 0) {
+    if (std::strncmp(title, result->title, std::strlen(result->title)) == 0) {
         result->handle = hwnd;
         return FALSE;
     }
