@@ -23,6 +23,9 @@ public:
 
 protected:
     const char* m_name;  // 操作名称
+
+    // 等待一段时间
+    void wait(int ms);
 };
 
 /**
@@ -65,6 +68,32 @@ private:
     RegionOfInterest   m_roi;      // 在窗口的这个区域内搜索
     ImageSearchTargets m_targets;  // 要搜索的图片，只要有一个target符合，就算搜索成功
     int                m_wait;     // 点击完成后，由于场景切换等原因，需要等待UI变化的时间（毫秒）
+};
+
+/**
+ * @brief 点击窗口中固定的某个位置
+ * 
+ * 有些场景的UI有特效，或者背景是半透明的，背景实时变化，用图像匹配很难保证100%正确，
+ * 好在位置是绝对固定的，就直接硬编码位置
+ * 
+ */
+class ClickByPositionCmd : public Command {
+public:
+    ClickByPositionCmd(const char* name,
+                       cv::Point   position,
+                       int         wait)
+        : Command{name},
+          m_position{position},
+          m_wait{wait}
+    {}
+
+    ~ClickByPositionCmd() override = default;
+
+    bool execute(Window& win) override;
+
+private:
+    cv::Point m_position;  // 相对窗口的坐标
+    int       m_wait;      // 点击完成后，等待的时间
 };
 
 };  // namespace autozhuxian

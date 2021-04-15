@@ -9,11 +9,22 @@
 namespace autozhuxian {
 
 /**
+ * 所有操作的公共方法
+ */
+void Command::wait(int ms)
+{
+    if (ms > 0) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+    }
+}
+
+/**
+ * 操作类型 1
  * 根据图片，找到其在窗口中的位置，并点击
  */
 bool ClickByImageCmd::execute(Window& win) override
 {
-    // TODO logger
+    // TODO logger, move to Command
     std::printf("\t执行操作：%s\n", m_name);
     // [0] 鼠标移到左上角，防止影响图像匹配
     move(0, 0);
@@ -35,21 +46,39 @@ bool ClickByImageCmd::execute(Window& win) override
         return false;
     }
     // TODO logger
-    std::printf("找到目标图片，位置(%d, %d)\n", location->x, location->y);
+    std::printf("\t\t找到目标图片，位置(%d, %d)\n", location->x, location->y);
 
     // [4] 点击目标图片的中心 = 窗口偏移 + roi + location + 目标图片尺寸 / 2
     int x = win.x() + m_roi.x + location->x + target.cols / 2;
     int y = win.y() + m_roi.y + location->y + target.rows / 2;
     // TODO logger
-    std::printf("鼠标点击(%d, %d)\n", x, y);
+    std::printf("\t\t鼠标点击(%d, %d)\n", x, y);
     click(x, y);
 
     // [5] 等待UI变化
-    if (m_wait) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(m_wait));
-    }
+    Command::wait(m_wait);
 
     return true;
+}
+
+/**
+ * 操作类型 2
+ * 点击窗口中固定的某个位置
+ */
+bool ClickByPositionCmd::execute(Window& win) override
+{
+    // TODO logger
+    std::printf("\t执行操作：%s\n", m_name);
+
+    // [1] 点击目标位置
+    int x = win.x() + m_position.x;
+    int y = win.y() + m_position.y;
+    // TODO logger
+    std::printf("\t\t鼠标点击(%d, %d)\n", x, y);
+    click(x, y);
+
+    // [2] 等待UI变化
+    Command::wait(m_wait);
 }
 
 };  // namespace autozhuxian
