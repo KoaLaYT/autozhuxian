@@ -51,32 +51,32 @@ struct WindowManager {
 
 int main()
 {
-    std::vector<autozhuxian::Process> task{
-        {
-            "寻找服务器",
-            {400, 0, 800, 1024},
-            PATH("server.png"),
-            NULL,
-            0,
-            nullptr,
-        },
-        {
-            "选择服务器",
-            {400, 0, 800, 1024},
-            PATH("confirm.png"),
-            NULL,
-            10'000,  // 人物有个动画效果
-            nullptr,
-        },
-        {
-            "进入游戏",
-            {400, 512, 800, 512},
-            PATH("enter.png"),
-            PATH("enter_mask.png"),
-            10'000,
-            nullptr,
-        },
-    };
+    // std::vector<autozhuxian::Process> task{
+    //     {
+    //         "寻找服务器",
+    //         {400, 0, 800, 1024},
+    //         PATH("server.png"),
+    //         NULL,
+    //         0,
+    //         nullptr,
+    //     },
+    //     {
+    //         "选择服务器",
+    //         {400, 0, 800, 1024},
+    //         PATH("confirm.png"),
+    //         NULL,
+    //         10'000,  // 人物有个动画效果
+    //         nullptr,
+    //     },
+    //     {
+    //         "进入游戏",
+    //         {400, 512, 800, 512},
+    //         PATH("enter.png"),
+    //         PATH("enter_mask.png"),
+    //         10'000,
+    //         nullptr,
+    //     },
+    // };
 
     char* platform = "完美游戏平台";
     char* platform_subwin = "游戏多开";

@@ -26,19 +26,7 @@ static BITMAPINFOHEADER create_bitmap_header(int width, int height)
 
 namespace autozhuxian {
 
-RegionOfInterest RegionOfInterest::from_rect(RECT rect)
-{
-    return RegionOfInterest{0, 0,
-                            rect.right - rect.left,
-                            rect.bottom - rect.top};
-}
-
-RegionOfInterest RegionOfInterest::from_hwnd(HWND hwnd)
-{
-    RECT rect;
-    GetClientRect(hwnd, &rect);
-    return RegionOfInterest::from_rect(rect);
-}
+RegionOfInterest RegionOfInterest::whole = RegionOfInterest{0, 0, 0, 0};
 
 cv::Mat screenshot_region(HWND hwnd, RegionOfInterest roi)
 {

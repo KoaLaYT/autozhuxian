@@ -1,6 +1,7 @@
 #ifndef KOALAYT_CONTROL_HPP_20210407
 #define KOALAYT_CONTROL_HPP_20210407
 
+// win32
 #include <windows.h>
 #include <winuser.h>
 
