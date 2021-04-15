@@ -9,7 +9,7 @@
 namespace autozhuxian {
 
 /**
- * @brief ROI 窗口的某一区域，也即搜索的source区域
+ * @brief ROI 窗口的某一区域
  * 
  */
 struct RegionOfInterest {
@@ -17,6 +17,11 @@ struct RegionOfInterest {
     int y;
     int width;
     int height;
+
+    bool is_whole() { return this == &whole; }
+
+    // 一个特殊的值，代表整个屏幕都是ROI
+    static RegionOfInterest whole;
 };
 
 /**

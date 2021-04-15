@@ -26,6 +26,8 @@ static BITMAPINFOHEADER create_bitmap_header(int width, int height)
 
 namespace autozhuxian {
 
+RegionOfInterest RegionOfInterest::whole = RegionOfInterest{0, 0, 0, 0};
+
 cv::Mat screenshot_region(HWND hwnd, RegionOfInterest roi)
 {
     cv::Mat src;
@@ -39,7 +41,7 @@ cv::Mat screenshot_region(HWND hwnd, RegionOfInterest roi)
     src.create(roi.height, roi.width, CV_8UC4);
 
     // create a bitmap
-    HBITMAP hbwindow = CreateCompatibleBitmap(hWindowDC, roi.width, roi.height);
+    HBITMAP          hbwindow = CreateCompatibleBitmap(hWindowDC, roi.width, roi.height);
     BITMAPINFOHEADER bi = impl::create_bitmap_header(roi.width, roi.height);
 
     // use the previously created device context with the bitmap
