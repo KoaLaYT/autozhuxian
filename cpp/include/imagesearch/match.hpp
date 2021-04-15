@@ -1,12 +1,58 @@
 #ifndef KOALAYT_MATCH_HPP_20210408
 #define KOALAYT_MATCH_HPP_20210408
 
+// std
+#include <optional>
+#include <filesystem>
+// third party
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
-#include <optional>
+#include <fmt/core.h>
 
 namespace autozhuxian {
 
+/**
+ * @brief 图片搜索的文件路径，可能包含mask文件
+ * 
+ */
+class ImageSearchTarget {
+public:
+    ImageSearchTarget(const char* target) : m_mask{nullptr}
+    {
+        check_path_valid(target);
+        m_target = target;
+    }
+
+    ImageSearchTarget(const char* target, const char* mask)
+    {
+        check_path_valid(target);
+        check_path_valid(mask);
+        m_target = target;
+        m_mask = mask;
+    }
+
+    bool has_mask() { return m_mask != nullptr; }
+
+    cv::Mat target() { return cv::imread(m_target, cv::IMREAD_UNCHANGED); }
+    cv::Mat mask() { return cv::imread(m_mask, cv::IMREAD_GRAYSCALE); }
+
+private:
+    const char* m_target;
+    const char* m_mask;
+
+    // 验证路径合法
+    void check_path_valid(const char* path)
+    {
+        if (!std::filesystem::exists(path)) {
+            throw std::runtime_error{fmt::format("file: {} does not exists\n", path)};
+        }
+    }
+};
+
+/**
+ * @brief 图片搜索
+ * 
+ */
 class Matcher {
 public:
     Matcher(const cv::Mat& source, double confidence)

@@ -1,14 +1,15 @@
 #ifndef KOALAYT_WINDOW_HPP_20210407
 #define KOALAYT_WINDOW_HPP_20210407
 
+// std
+#include <optional>
+#include <stdexcept>
+#include <string>
+// win32
 #include <windows.h>
 #include <winuser.h>
-
-#include <optional>
-#include <string>
-#include <stdexcept>
-
-#include <task/task.hpp>
+// project
+#include <imagesearch/screenshot.hpp>
 
 namespace autozhuxian {
 
@@ -27,35 +28,27 @@ public:
         }
     }
 
-    HWND handle() { return m_handle; }
+    // getter
+    HWND       handle() { return m_handle; }
     WINDOWINFO window_info() { return m_window_info; }
 
-    /**
-     * // TODO
-     * @brief 
-     * 
-     * @param process 
-     * @return true 
-     * @return false 
-     */
-    bool run(Process& process);
+    // 窗口本身的位置，在相对坐标转绝对坐标时，需要加上
+    int x() { return m_window_info.rcWindow.left + m_window_info.cxWindowBorders; }
+    int y() { return m_window_info.rcWindow.top + title_and_border_height(); }
 
-    // TODO add more useful methods
+    // 整个窗口内容都作为ROI
+    RegionOfInterest roi();
 
 private:
-    std::string m_title;       // 窗口标题
-    HWND m_handle;             // 窗口handle
-    WINDOWINFO m_window_info;  // 窗口信息
+    std::string m_title;        // 窗口标题
+    HWND        m_handle;       // 窗口handle
+    WINDOWINFO  m_window_info;  // 窗口信息
 
     int rect_height(RECT& rect) { return rect.bottom - rect.top; }
+    int rect_width(RECT& rect) { return rect.right - rect.left; }
 
-    int window_cap_border_height()
-    {
-        int win_height = rect_height(m_window_info.rcWindow);
-        int cli_height = rect_height(m_window_info.rcClient);
-
-        return win_height - cli_height - m_window_info.cyWindowBorders;
-    }
+    // 上边框 + 标题栏的高度，转换绝对坐标的时候要加上去
+    int title_and_border_height();
 };
 
 /**
@@ -63,8 +56,8 @@ private:
  * 
  * 标题大于title也算符合
  * 例如，title = 诛仙
- * 则，能找到的窗口标题：诛仙、诛仙3、
- * 123诛仙 不符合
+ * 则能找到的窗口标题：诛仙、诛仙3
+ * 但123诛仙 不符合
  * 
  * @param title 窗口标题
  * @return std::optional<Window> 
