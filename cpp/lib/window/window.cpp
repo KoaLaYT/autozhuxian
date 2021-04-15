@@ -8,7 +8,7 @@ namespace impl {
 
 struct FindWindowResult {
     PCHAR title;
-    HWND  handle;
+    HWND handle;
 };
 
 /**
@@ -22,7 +22,7 @@ struct FindWindowResult {
 static BOOL CALLBACK EnumWindowCb(HWND hwnd, LPARAM lParam)
 {
     CHAR title[1024];
-    int  length = GetWindowTextA(hwnd, title, sizeof(title));
+    int length = GetWindowTextA(hwnd, title, sizeof(title));
 
     // 有的无窗口应用还是会有hwnd，在这里过滤掉
     if (!IsWindowVisible(hwnd) ||
@@ -49,8 +49,8 @@ RegionOfInterest Window::roi()
     return RegionOfInterest{
         0,
         0,
-        rect_width(m_window_info.rcClient),
-        rect_height(m_window_info.rcClient),
+        rect_width(m_window_info.rcWindow),
+        rect_height(m_window_info.rcWindow),
     };
 }
 

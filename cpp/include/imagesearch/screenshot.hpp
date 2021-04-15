@@ -18,7 +18,7 @@ struct RegionOfInterest {
     int width;
     int height;
 
-    bool is_whole() { return this == &whole; }
+    bool is_whole() { return width == 0 || height == 0; }
 
     // 一个特殊的值，代表整个屏幕都是ROI
     static RegionOfInterest whole;

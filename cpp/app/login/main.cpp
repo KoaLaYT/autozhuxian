@@ -12,14 +12,14 @@
 #define PATH(p) BASE p
 
 using namespace std::chrono_literals;
+using ZXWindow = autozhuxian::Window;
 
 // TODO remove duplicate logic
 static void open_platform();
-// static void start_game(HWND hwnd);
+static void start_game(ZXWindow& win);
+static void confirm_updated(ZXWindow& win);
 
 struct WindowManager {
-    using ZXWindow = autozhuxian::Window;
-
     std::vector<ZXWindow> windows;
 
     static BOOL CALLBACK EnumWindowCb(HWND hwnd, LPARAM lParam)
@@ -49,61 +49,56 @@ struct WindowManager {
     }
 };
 
+static std::vector<autozhuxian::Command*> login_task()
+{
+    using namespace autozhuxian;
+    return std::vector<Command*>{
+        new ClickByImageCmd{
+            "寻找服务器承天竹影",
+            RegionOfInterest{400, 0, 800, 1024},
+            PATH("server.png"),
+            0,
+        },
+        new ClickByImageCmd{
+            "选择服务器",
+            RegionOfInterest{400, 0, 800, 1024},
+            PATH("confirm.png"),
+            2'000,
+        },
+        new ClickByPositionCmd{
+            "进入游戏",
+            cv::Point{800, 962},
+            10'000,
+        },
+    };
+}
+
 int main()
 {
-    // std::vector<autozhuxian::Process> task{
-    //     {
-    //         "寻找服务器",
-    //         {400, 0, 800, 1024},
-    //         PATH("server.png"),
-    //         NULL,
-    //         0,
-    //         nullptr,
-    //     },
-    //     {
-    //         "选择服务器",
-    //         {400, 0, 800, 1024},
-    //         PATH("confirm.png"),
-    //         NULL,
-    //         10'000,  // 人物有个动画效果
-    //         nullptr,
-    //     },
-    //     {
-    //         "进入游戏",
-    //         {400, 512, 800, 512},
-    //         PATH("enter.png"),
-    //         PATH("enter_mask.png"),
-    //         10'000,
-    //         nullptr,
-    //     },
-    // };
-
-    char* platform = "完美游戏平台";
+    char* platform_title = "完美游戏平台";
     char* platform_subwin = "游戏多开";
-    auto platform_hwnd = autozhuxian::find_window(platform);
-    if (!platform_hwnd) {
+    auto platform = autozhuxian::find_window(platform_title);
+    if (!platform) {
         std::printf("未找到窗口，尝试打开窗口\n");
         open_platform();
         return main();
     }
+
     std::printf("完美游戏平台已打开\n");
-    // start_game(platform_hwnd);
-    // std::printf("诛仙已开始\n");
-    // WindowManager wm;
+    start_game(platform.value());
 
-    // for (auto& win : wm.windows) {
-    //     // 切换窗口，等待界面刷新
-    //     SetForegroundWindow(win.handle());
-    //     std::this_thread::sleep_for(1000ms);
+    std::printf("诛仙已开始\n");
+    WindowManager wm;
 
-    //     for (auto& proc : task) {
-    //         if (!win.run(proc)) {
-    //             std::printf("子流程%s失败\n", proc.name);
-    //             //TODO back to last process
-    //         }
-    //         // TODO proc.confirm
-    //     }
-    // }
+    for (auto& win : wm.windows) {
+        // 切换窗口，等待界面刷新
+        SetForegroundWindow(win.handle());
+        std::this_thread::sleep_for(1000ms);
+
+        for (auto& cmd : login_task()) {
+            cmd->execute(win);
+        }
+    }
 
     return 0;
 }
@@ -116,8 +111,8 @@ static void open_platform()
     autozhuxian::move(0, 0);
 
     HWND desktop_hwnd = GetDesktopWindow();
-    cv::Mat source = autozhuxian::screenshot_region(desktop_hwnd,
-                                                    autozhuxian::RegionOfInterest::from_hwnd(desktop_hwnd));
+    autozhuxian::Window desktop{"桌面", desktop_hwnd};
+    cv::Mat source = autozhuxian::screenshot_region(desktop_hwnd, desktop.roi());
     cv::Mat platform_icon = cv::imread(PATH("wanmei_platform.png"), cv::IMREAD_UNCHANGED);
 
     autozhuxian::Matcher matcher{source};
@@ -133,78 +128,50 @@ static void open_platform()
     std::this_thread::sleep_for(10'000ms);
 }
 
-/*
-static void start_game(HWND hwnd)
+static void start_game(ZXWindow& win)
 {
-    SetForegroundWindow(hwnd);
-    auto region = get_window_region(hwnd);
-    auto position = get_window_position(hwnd);
-    cv::Mat platform_screenshot = autozhuxian::screenshot_region(hwnd, region);
-    cv::Mat start_game_icon = cv::imread(PATH("login\\start_game.png"), cv::IMREAD_UNCHANGED);
-    cv::Point location = autozhuxian::match_template(platform_screenshot, start_game_icon);
+    SetForegroundWindow(win.handle());
+    // TODO check if need update
 
-    autozhuxian::click(location.x + position.left + start_game_icon.cols / 2,
-                       location.y + position.top + start_game_icon.rows / 2);
-    // waiting for the window shows
-    std::this_thread::sleep_for(30'000ms);
-}
+    confirm_updated(win);
 
-static void select_server(HWND hwnd)
-{
-    SetForegroundWindow(hwnd);
-    autozhuxian::move(0, 0);
-
-    auto region = get_window_region(hwnd);
-    auto position = get_window_position(hwnd);
-    cv::Mat platform_screenshot = autozhuxian::screenshot_region(hwnd, region);
     {
-        cv::Mat start_game_icon = cv::imread(PATH("login\\server.png"), cv::IMREAD_UNCHANGED);
-        cv::Point location = autozhuxian::match_template(platform_screenshot, start_game_icon);
-
-        // TODO find more accurate calculation of window caption bar size
-        autozhuxian::click(location.x + position.left + start_game_icon.cols / 2,
-                           location.y + position.top + start_game_icon.rows / 2 + position.height - region.height);
+        autozhuxian::ClickByImageCmd cmd{
+            "点击游戏多开",
+            autozhuxian::RegionOfInterest::whole,
+            PATH("multiopen.png"),
+            1000,
+        };
+        cmd.execute(win);
     }
-    {
-        cv::Mat start_game_icon = cv::imread(PATH("login\\confirm.png"), cv::IMREAD_UNCHANGED);
-        cv::Point location = autozhuxian::match_template(platform_screenshot, start_game_icon);
 
-        // TODO find more accurate calculation of window caption bar size
-        autozhuxian::click(location.x + position.left + start_game_icon.cols / 2,
-                           location.y + position.top + start_game_icon.rows / 2 + position.height - region.height);
+    auto sub_win = autozhuxian::find_window("游戏多开");
+    if (!sub_win) {
+        throw std::runtime_error{"打开多开窗口失败"};
     }
-    // waiting for the window shows
-    std::this_thread::sleep_for(2'000ms);
+    autozhuxian::ClickByImageCmd cmd{
+        "点击开始多开游戏",
+        autozhuxian::RegionOfInterest::whole,
+        PATH("multistart.png"),
+        60'000,
+    };
+    cmd.execute(sub_win.value());
 }
 
-static void enter_game(HWND hwnd)
+static void confirm_updated(autozhuxian::Window& win)
 {
-    autozhuxian::move(0, 0);
-    auto region = get_window_region(hwnd);
-    auto position = get_window_position(hwnd);
-    cv::Mat platform_screenshot = autozhuxian::screenshot_region(hwnd, region);
-
-    cv::imwrite(PATH("tmp\\enter.png"), platform_screenshot);
-
-    cv::Mat start_game_icon = cv::imread(PATH("login\\enter.png"), cv::IMREAD_UNCHANGED);
-    cv::Point location = autozhuxian::match_template(platform_screenshot, start_game_icon);
-
-    // TODO find more accurate calculation of window caption bar size
-    autozhuxian::click(location.x + position.left + start_game_icon.cols / 2,
-                       location.y + position.top + start_game_icon.rows / 2 + position.height - region.height);
+    cv::Mat target = cv::imread(PATH("start_game.png"), cv::IMREAD_UNCHANGED);
+    std::optional<cv::Point> position = std::nullopt;
+    while (true) {
+        auto screenshot = autozhuxian::screenshot_region(win.handle(), win.roi());
+        autozhuxian::Matcher matcher{screenshot};
+        position = matcher.search(target);
+        if (position) {
+            break;
+        } else {
+            std::printf("游戏正在更新\n");
+            std::this_thread::sleep_for(1'000ms);
+        }
+    }
+    std::printf("游戏已更新\n");
 }
-
-static autozhuxian::ScreenshotRegion get_window_region(HWND hwnd)
-{
-    RECT window_rect;
-    GetClientRect(hwnd, &window_rect);
-    return autozhuxian::ScreenshotRegion{window_rect};
-}
-
-static autozhuxian::ScreenshotRegion get_window_position(HWND hwnd)
-{
-    RECT window_rect;
-    GetWindowRect(hwnd, &window_rect);
-    return autozhuxian::ScreenshotRegion{window_rect};
-}
-*/

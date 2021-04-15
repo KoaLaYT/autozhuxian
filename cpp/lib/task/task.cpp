@@ -25,7 +25,7 @@ void Command::wait(int ms)
 /// ---------------------------------------------------------
 /// 根据图片，找到其在窗口中的位置，并点击
 ///
-bool ClickByImageCmd::execute(Window& win) override
+bool ClickByImageCmd::execute(Window& win)
 {
     // TODO logger, move to Command
     std::printf("\t执行操作：%s\n", m_name);
@@ -42,11 +42,14 @@ bool ClickByImageCmd::execute(Window& win) override
     // 搜索目标图片的坐标
     // ---------------------------------------------------------
     std::optional<cv::Point> location = std::nullopt;
-    for (auto ist : m_targets) {
-        location = ist.has_mask() ? matcher.search_with_mask(ist.target(), ist.mask())
-                                  : matcher.search(ist.target());
+    auto ist = m_targets.begin();
+    while (ist != m_targets.end()) {
+        location = ist->has_mask() ? matcher.search_with_mask(ist->target(), ist->mask())
+                                   : matcher.search(ist->target());
         if (location) break;
+        ist++;
     }
+
     // 搜索结束
     // ---------------------------------------------------------
     if (!location) {
@@ -59,8 +62,8 @@ bool ClickByImageCmd::execute(Window& win) override
     // 点击目标图片的中心
     // = 窗口偏移 + roi + location + 目标图片尺寸 / 2
     // ---------------------------------------------------------
-    int x = win.x() + m_roi.x + location->x + target.cols / 2;
-    int y = win.y() + m_roi.y + location->y + target.rows / 2;
+    int x = win.x() + m_roi.x + location->x + ist->width() / 2;
+    int y = win.y() + m_roi.y + location->y + ist->height() / 2;
     // TODO logger
     std::printf("\t\t鼠标点击(%d, %d)\n", x, y);
     click(x, y);
@@ -77,7 +80,7 @@ bool ClickByImageCmd::execute(Window& win) override
 /// ---------------------------------------------------------
 /// 点击窗口中固定的某个位置
 ///
-bool ClickByPositionCmd::execute(Window& win) override
+bool ClickByPositionCmd::execute(Window& win)
 {
     // TODO logger, move to Command
     std::printf("\t执行操作：%s\n", m_name);
@@ -93,6 +96,8 @@ bool ClickByPositionCmd::execute(Window& win) override
     // 等待UI变化
     // ---------------------------------------------------------
     Command::wait(m_wait);
+
+    return true;
 }
 
 };  // namespace autozhuxian

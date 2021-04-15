@@ -33,12 +33,24 @@ public:
 
     bool has_mask() { return m_mask != nullptr; }
 
-    cv::Mat target() { return cv::imread(m_target, cv::IMREAD_UNCHANGED); }
+    // TODO check if target has been called!
+    int width() { return m_width; }
+    int height() { return m_height; }
+
+    cv::Mat target()
+    {
+        auto result = cv::imread(m_target, cv::IMREAD_UNCHANGED);
+        m_width = result.cols;
+        m_height = result.rows;
+        return result;
+    }
     cv::Mat mask() { return cv::imread(m_mask, cv::IMREAD_GRAYSCALE); }
 
 private:
     const char* m_target;
     const char* m_mask;
+    int m_width{0};
+    int m_height{0};
 
     // 验证路径合法
     void check_path_valid(const char* path)
