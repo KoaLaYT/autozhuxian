@@ -47,13 +47,13 @@ static FindLocRes find_location(Window&             win,
         ist++;
     }
 
-    // 搜索结束
+    // 搜索结束 // TODO logger
     // ---------------------------------------------------------
     if (!location) {
         std::printf("\t\t失败，未找到目标图片\n");
+    } else {
+        std::printf("\t\t找到目标图片，位置(%d, %d)\n", location->x, location->y);
     }
-    // TODO logger
-    std::printf("\t\t找到目标图片，位置(%d, %d)\n", location->x, location->y);
 
     return FindLocRes{location, ist->width(), ist->height()};
 }
