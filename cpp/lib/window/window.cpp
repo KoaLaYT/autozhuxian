@@ -49,8 +49,8 @@ RegionOfInterest Window::roi()
     return RegionOfInterest{
         0,
         0,
-        rect_width(m_window_info.rcWindow),
-        rect_height(m_window_info.rcWindow),
+        rect_width(m_window_info.rcClient),
+        rect_height(m_window_info.rcClient),
     };
 }
 

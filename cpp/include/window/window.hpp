@@ -28,7 +28,7 @@ public:
         }
     }
 
-    Window() : m_title{nullptr}, m_handle{nullptr} {}
+    Window() : m_title{""}, m_handle{nullptr} {}
 
     // getter
     HWND       handle() { return m_handle; }

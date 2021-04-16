@@ -23,14 +23,14 @@ Size get_rect_size(RECT& rect)
 
 TEST(window, find_window)
 {
-    auto wanmei_platform = autozhuxian::find_window("游戏多开");
+    auto wanmei_platform = autozhuxian::find_window("诛仙3");
     ASSERT_TRUE(wanmei_platform);
     ASSERT_TRUE(wanmei_platform->handle());
 
-    Size win_size = get_rect_size(wanmei_platform->window_info().rcWindow);
+    Size win_size = get_rect_size(wanmei_platform->window_info().rcClient);
     win_size.print();
 
     cv::Mat screenshot = autozhuxian::screenshot_region(wanmei_platform->handle(),
                                                         autozhuxian::RegionOfInterest{0, 0, win_size.width, win_size.height});
-    cv::imwrite("C:\\Users\\koalayt\\Desktop\\autozhuxian\\assets\\tmp\\wanmeiplatform.png", screenshot);
+    cv::imwrite("C:\\Users\\koalayt\\Desktop\\autozhuxian\\assets\\tmp\\screen.png", screenshot);
 }

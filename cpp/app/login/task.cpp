@@ -59,6 +59,7 @@ void LoginTask::run(Window& win)
 ///
 void LaunchTask::init()
 {
+    std::printf("???");
     while (true) {
         auto platform = find_window("完美游戏平台");
         if (!platform) {
@@ -105,7 +106,7 @@ void LaunchTask::run()
     }
     ClickByImageCmd cmd{
         "点击开始多开游戏",
-        RegionOfInterest::whole,
+        RegionOfInterest{0, 0, 621, 334},
         PATH("multistart.png"),
         60'000,
     };
