@@ -1,10 +1,14 @@
 // std
 #include <thread>
+#include <chrono>
 #include <cstdio>
 // project
+#include <control/control.hpp>
 #include <command/command.hpp>
 #include "task.hpp"
 #include "macro.hpp"
+
+using namespace std::chrono_literals;
 
 ///
 /// 登录游戏
@@ -51,14 +55,13 @@ void LoginTask::run(Window& win)
 ///
 /// 启动游戏
 /// ---------------------------------------------------------
-/// Constructor
-/// 完成后完美游戏平台已打开
+/// 初始化窗口
 ///
-LaunchTask::LaunchTask()
+void LaunchTask::init()
 {
     while (true) {
         auto platform = find_window("完美游戏平台");
-        if (!platfrom) {
+        if (!platform) {
             std::printf("完美游戏平台未启动，尝试打开\n");
             open_platform();
         } else {
@@ -74,13 +77,13 @@ LaunchTask::LaunchTask()
 /// ---------------------------------------------------------
 /// 开始更新游戏，或者多开启动诛仙3
 ///
-void LaunchTask::run(Window& win)
+void LaunchTask::run()
 {
-    SetForegroundWindow(win.handle());
+    SetForegroundWindow(m_platform.handle());
 
     // TODO update check
 
-    wait_updated(win);
+    wait_updated(m_platform);
 
     // 点击多开按钮，会弹出一个新窗口
     // ---------------------------------------------------------
@@ -91,7 +94,7 @@ void LaunchTask::run(Window& win)
             PATH("multiopen.png"),
             1000,
         };
-        cmd.execute(win);
+        cmd.execute(m_platform);
     }
 
     // 在这个新窗口中点击开始游戏

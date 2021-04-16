@@ -28,6 +28,8 @@ public:
         }
     }
 
+    Window() : m_title{nullptr}, m_handle{nullptr} {}
+
     // getter
     HWND       handle() { return m_handle; }
     WINDOWINFO window_info() { return m_window_info; }

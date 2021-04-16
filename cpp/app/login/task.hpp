@@ -34,12 +34,12 @@ private:
 ///
 class LaunchTask {
 public:
-    LaunchTask();
+    LaunchTask() { init(); }
 
     // ---------------------------------------------------------
     // 执行该任务
     //
-    void run(Window& win);
+    void run();
 
 private:
     Window m_platform;  // 完美游戏平台的窗口
@@ -53,6 +53,11 @@ private:
     // 等待游戏更新完成
     //
     void wait_updated(Window& win);
+
+    // ---------------------------------------------------------
+    // 初始化窗口
+    //
+    void init();
 };
 
 #endif
