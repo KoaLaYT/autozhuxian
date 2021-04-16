@@ -1,5 +1,7 @@
-#include <control/control.hpp>
+// std
 #include <array>
+// project
+#include <control/control.hpp>
 
 namespace impl {
 

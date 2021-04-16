@@ -1,10 +1,62 @@
 // std
 #include <thread>
 // project
-#include <task/task.hpp>
+#include <command/command.hpp>
 #include <control/control.hpp>
 #include <imagesearch/screenshot.hpp>
 #include <imagesearch/match.hpp>
+
+namespace impl {
+
+using namespace autozhuxian;
+
+///
+/// 在窗口的ROI中搜索目标图片的位置
+/// ---------------------------------------------------------
+/// 在多个cmd中反复出现的逻辑
+//? 搬到Command中
+///
+static std::optional<cv::Point> find_location(Window&             win,
+                                              RegionOfInterest&   roi,
+                                              ImageSearchTargets& targets)
+{
+    // 鼠标移到左上角，防止影响图像匹配
+    // ---------------------------------------------------------
+    move(0, 0);
+
+    // 对搜索区域截图
+    // ---------------------------------------------------------
+    cv::Mat roi_screenshot = screenshot_region(win.handle(),
+                                               roi.is_whole() ? win.roi() : roi);
+    Matcher matcher{roi_screenshot};
+
+    // 搜索目标图片的坐标
+    // ---------------------------------------------------------
+    std::optional<cv::Point> location = std::nullopt;
+    auto                     ist = targets.begin();
+    while (ist != targets.end()) {
+        location = ist->has_mask() ? matcher.search_with_mask(ist->target(), ist->mask())
+                                   : matcher.search(ist->target());
+        if (location) break;
+        ist++;
+    }
+
+    // 搜索结束
+    // ---------------------------------------------------------
+    if (!location) {
+        std::printf("\t\t失败，未找到目标图片\n");
+    }
+    // TODO logger
+    std::printf("\t\t找到目标图片，位置(%d, %d)\n", location->x, location->y);
+
+    return location;
+}
+
+};  // namespace impl
+
+// ------------------------------------------------------------------------------- //
+// ---------------------------------DIVIDER--------------------------------------- //
+// ------------------------------------------------------------------------------- //
 
 namespace autozhuxian {
 
@@ -29,35 +81,11 @@ bool ClickByImageCmd::execute(Window& win)
 {
     // TODO logger, move to Command
     std::printf("\t执行操作：%s\n", m_name);
-    // 鼠标移到左上角，防止影响图像匹配
-    // ---------------------------------------------------------
-    move(0, 0);
 
-    // 对搜索区域截图
+    // 寻找目标坐标
     // ---------------------------------------------------------
-    cv::Mat roi_screenshot = screenshot_region(win.handle(),
-                                               m_roi.is_whole() ? win.roi() : m_roi);
-    Matcher matcher{roi_screenshot};
-
-    // 搜索目标图片的坐标
-    // ---------------------------------------------------------
-    std::optional<cv::Point> location = std::nullopt;
-    auto ist = m_targets.begin();
-    while (ist != m_targets.end()) {
-        location = ist->has_mask() ? matcher.search_with_mask(ist->target(), ist->mask())
-                                   : matcher.search(ist->target());
-        if (location) break;
-        ist++;
-    }
-
-    // 搜索结束
-    // ---------------------------------------------------------
-    if (!location) {
-        std::printf("\t\t失败，未找到目标图片\n");
-        return false;
-    }
-    // TODO logger
-    std::printf("\t\t找到目标图片，位置(%d, %d)\n", location->x, location->y);
+    auto location = impl::find_location(win, m_roi, m_targets);
+    if (!location) return false;
 
     // 点击目标图片的中心
     // = 窗口偏移 + roi + location + 目标图片尺寸 / 2
@@ -98,6 +126,20 @@ bool ClickByPositionCmd::execute(Window& win)
     Command::wait(m_wait);
 
     return true;
+}
+
+///
+/// 操作类型 3
+/// ---------------------------------------------------------
+/// 查看窗口中某个图片是否出现
+///
+bool ConfirmImageCmd::execute(Window& win)
+{
+    // TODO logger, move to Command
+    std::printf("\t执行操作：%s\n", m_name);
+
+    auto location = impl::find_location(win, m_roi, m_targets);
+    return location.has_value();
 }
 
 };  // namespace autozhuxian

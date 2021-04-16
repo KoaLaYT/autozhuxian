@@ -1,5 +1,5 @@
-#ifndef KOALAYT_TASK_HPP_20210409
-#define KOALAYT_TASK_HPP_20210409
+#ifndef KOALAYT_COMMAND_HPP_20210409
+#define KOALAYT_COMMAND_HPP_20210409
 
 // std
 #include <vector>
@@ -76,12 +76,14 @@ public:
         m_targets.emplace_back(target);
     }
 
-    // Destructor
     // ---------------------------------------------------------
+    // Destructor
+    //
     ~ClickByImageCmd() override = default;
 
-    // Dispatcher
     // ---------------------------------------------------------
+    // Dispatcher
+    //
     bool execute(Window& win) override;
 
 private:
@@ -98,6 +100,9 @@ private:
 ///
 class ClickByPositionCmd : public Command {
 public:
+    // ---------------------------------------------------------
+    // Constructor
+    //
     ClickByPositionCmd(const char* name,
                        cv::Point   position,
                        int         wait)
@@ -106,13 +111,66 @@ public:
           m_wait{wait}
     {}
 
+    // ---------------------------------------------------------
+    // Destructor
+    //
     ~ClickByPositionCmd() override = default;
 
+    // ---------------------------------------------------------
+    // Dispatcher
+    //
     bool execute(Window& win) override;
 
 private:
     cv::Point m_position;  // 相对窗口的坐标
     int       m_wait;      // 点击完成后，等待的时间
+};
+
+///
+/// 查看窗口中某个图片是否出现
+/// ---------------------------------------------------------
+/// 比如报名副本后，需要判断是否进入副本，然后切换执行的命令流
+///
+class ConfirmImageCmd : public Command {
+public:
+    using ImageSearchTargets = std::vector<ImageSearchTarget>;
+
+    // ---------------------------------------------------------
+    // Constructor1
+    //
+    ConfirmImageCmd(const char*          name,
+                    RegionOfInterest     roi,
+                    ImageSearchTargets&& targets)
+        : Command{name},
+          m_roi{roi},
+          m_targets{std::move(targets)}
+    {}
+
+    // ---------------------------------------------------------
+    // Constructor2: 大部分情况下，就只要搜索一张图片
+    //
+    ConfirmImageCmd(const char*      name,
+                    RegionOfInterest roi,
+                    const char*      target)
+        : Command{name},
+          m_roi{roi}
+    {
+        m_targets.emplace_back(target);
+    }
+
+    // ---------------------------------------------------------
+    // Destructor
+    //
+    ~ConfirmImageCmd() override = default;
+
+    // ---------------------------------------------------------
+    // Dispatcher
+    //
+    bool execute(Window& win) override;
+
+private:
+    RegionOfInterest   m_roi;      //在窗口的这个区域内搜索
+    ImageSearchTargets m_targets;  // 要搜索的图片，有一个符合，即成功
 };
 
 };  // namespace autozhuxian
