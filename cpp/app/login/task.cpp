@@ -32,7 +32,7 @@ LoginTask::LoginTask()
     m_cmds.emplace_back(std::make_unique<ClickByPositionCmd>(
         "进入游戏",
         cv::Point{800, 962},
-        0));
+        200));
 }
 
 ///
@@ -59,7 +59,6 @@ void LoginTask::run(Window& win)
 ///
 void LaunchTask::init()
 {
-    std::printf("???");
     while (true) {
         auto platform = find_window("完美游戏平台");
         if (!platform) {

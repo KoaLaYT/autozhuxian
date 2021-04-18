@@ -21,6 +21,7 @@ namespace autozhuxian {
 void press(DWORD keycode)
 {
     std::array<INPUT, 2> inputs;
+    inputs.fill({});
 
     inputs[0].type = INPUT_KEYBOARD;
     inputs[0].ki.wVk = keycode;
@@ -37,7 +38,7 @@ void move(int x, int y)
 {
     auto size = impl::get_desktop_size();
 
-    INPUT input;
+    INPUT input{};
     input.type = INPUT_MOUSE;
     input.mi.dx = (double)x / size.first * 65536;
     input.mi.dy = (double)y / size.second * 65536;
@@ -48,6 +49,7 @@ void move(int x, int y)
 void click()
 {
     std::array<INPUT, 2> inputs;
+    inputs.fill({});
 
     inputs[0].type = INPUT_MOUSE;
     inputs[0].mi.dx = 0;

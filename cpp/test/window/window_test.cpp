@@ -5,6 +5,7 @@
 #include <window/window.hpp>
 #include <imagesearch/screenshot.hpp>
 #include <command/command.hpp>
+#include <control/control.hpp>
 
 #define BASE "C:\\Users\\koalayt\\Desktop\\autozhuxian\\assets\\"
 #define PATH(p) BASE p
@@ -27,7 +28,7 @@ Size get_rect_size(RECT& rect)
 
 void screenshot_zx(const char* name)
 {
-    auto wanmei_platform = autozhuxian::find_window("诛仙3");
+    auto wanmei_platform = autozhuxian::find_window("完美");
     ASSERT_TRUE(wanmei_platform);
     ASSERT_TRUE(wanmei_platform->handle());
 
@@ -37,23 +38,24 @@ void screenshot_zx(const char* name)
     cv::Mat screenshot = autozhuxian::screenshot_region(wanmei_platform->handle(),
                                                         autozhuxian::RegionOfInterest{0, 0, win_size.width, win_size.height});
     cv::imwrite(name, screenshot);
+    autozhuxian::click();
 }
 
 TEST(window, close_window)
 {
-    // screenshot_zx(PATH("tmp\\screen.png"));
+    screenshot_zx(PATH("tmp\\screen.png"));
 
-    auto zx = autozhuxian::find_window("诛仙3");
-    ASSERT_TRUE(zx);
-    SetForegroundWindow(zx->handle());
+    // auto zx = autozhuxian::find_window("诛仙3");
+    // ASSERT_TRUE(zx);
+    // SetForegroundWindow(zx->handle());
 
-    autozhuxian::ClickByImageCmd cmd{
-        "关闭弹框",
-        autozhuxian::RegionOfInterest::whole,
-        PATH("common\\close_btn.png"),
-        0,
-    };
-    cmd.execute(zx.value());
+    // autozhuxian::ClickByImageCmd cmd{
+    //     "关闭弹框",
+    //     autozhuxian::RegionOfInterest::whole,
+    //     PATH("common\\close_btn.png"),
+    //     0,
+    // };
+    // cmd.execute(zx.value());
 
     // {
     //     autozhuxian::ClickByPositionCmd cmd{
