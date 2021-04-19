@@ -6,31 +6,36 @@
 
 namespace impl {
 
+///
+/// 窗口搜索后的结果
+/// ---------------------------------------------------------
+/// 把标题和对应的handle关联起来
+///
 struct FindWindowResult {
     PCHAR title;
     HWND  handle;
 };
 
-/**
- * @brief find_window的回调函数，在找到第一个匹配title的窗口后就停止
- * 
- * @param hwnd 当前遍历到的窗口
- * @param lParam EnumWindows传入的参数
- * @return TRUE 继续下一个窗口
- *         FALSE 停止
- */
+///
+/// find_window的回调函数
+/// ---------------------------------------------------------
+/// 在找到第一个匹配title的窗口后就停止
+///
 static BOOL CALLBACK EnumWindowCb(HWND hwnd, LPARAM lParam)
 {
     CHAR title[1024];
     int  length = GetWindowTextA(hwnd, title, sizeof(title));
 
     // 有的无窗口应用还是会有hwnd，在这里过滤掉
+    // ---------------------------------------------------------
     if (!IsWindowVisible(hwnd) ||
         length == 0 ||
         std::strcmp(title, "Program Manager") == 0) {
         return TRUE;
     }
 
+    // 找到对应的窗口就立即返回，否则继续
+    // ---------------------------------------------------------
     auto result = reinterpret_cast<FindWindowResult*>(lParam);
     if (std::strncmp(title, result->title, std::strlen(result->title)) == 0) {
         result->handle = hwnd;
@@ -44,6 +49,11 @@ static BOOL CALLBACK EnumWindowCb(HWND hwnd, LPARAM lParam)
 
 namespace autozhuxian {
 
+///
+/// Window的方法
+/// ---------------------------------------------------------
+/// 整个窗口内容都作为ROI
+///
 RegionOfInterest Window::roi()
 {
     return RegionOfInterest{
@@ -54,6 +64,11 @@ RegionOfInterest Window::roi()
     };
 }
 
+///
+/// Window的方法
+/// ---------------------------------------------------------
+/// 上边框 + 标题栏的高度，转换绝对坐标的时候要加上去
+///
 int Window::title_and_border_height()
 {
     int win_height = rect_height(m_window_info.rcWindow);
@@ -63,6 +78,11 @@ int Window::title_and_border_height()
     return win_height - cli_height - m_window_info.cyWindowBorders;
 }
 
+///
+/// autozhuxian下的函数
+/// ---------------------------------------------------------
+/// 根据标题找到对应的窗口
+///
 std::optional<Window> find_window(PCHAR title)
 {
     impl::FindWindowResult result{title, nullptr};

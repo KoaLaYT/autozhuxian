@@ -52,10 +52,10 @@ public:
     // ---------------------------------------------------------
     // Constructor1
     //
-    ClickByImageCmd(const char* name,
-                    RegionOfInterest roi,
+    ClickByImageCmd(const char*          name,
+                    RegionOfInterest     roi,
                     ImageSearchTargets&& targets,
-                    int wait)
+                    int                  wait)
         : Command{name},
           m_roi{roi},
           m_targets{std::move(targets)},
@@ -65,10 +65,10 @@ public:
     // ---------------------------------------------------------
     // Constructor2: 大部分情况下，就只要搜索一张图片
     //
-    ClickByImageCmd(const char* name,
+    ClickByImageCmd(const char*      name,
                     RegionOfInterest roi,
-                    const char* target,
-                    int wait)
+                    const char*      target,
+                    int              wait)
         : Command{name},
           m_roi{roi},
           m_wait{wait}
@@ -87,9 +87,9 @@ public:
     bool execute(Window& win) override;
 
 private:
-    RegionOfInterest m_roi;        // 在窗口的这个区域内搜索
+    RegionOfInterest   m_roi;      // 在窗口的这个区域内搜索
     ImageSearchTargets m_targets;  // 要搜索的图片，只要有一个target符合，就算搜索成功
-    int m_wait;                    // 点击完成后，由于场景切换等原因，需要等待UI变化的时间（毫秒）
+    int                m_wait;     // 点击完成后，由于场景切换等原因，需要等待UI变化的时间（毫秒）
 };
 
 ///
@@ -104,8 +104,8 @@ public:
     // Constructor
     //
     ClickByPositionCmd(const char* name,
-                       cv::Point position,
-                       int wait)
+                       cv::Point   position,
+                       int         wait)
         : Command{name},
           m_position{position},
           m_wait{wait}
@@ -123,7 +123,7 @@ public:
 
 private:
     cv::Point m_position;  // 相对窗口的坐标
-    int m_wait;            // 点击完成后，等待的时间
+    int       m_wait;      // 点击完成后，等待的时间
 };
 
 ///
@@ -136,8 +136,8 @@ public:
     // ---------------------------------------------------------
     // Constructor1
     //
-    ConfirmImageCmd(const char* name,
-                    RegionOfInterest roi,
+    ConfirmImageCmd(const char*          name,
+                    RegionOfInterest     roi,
                     ImageSearchTargets&& targets)
         : Command{name},
           m_roi{roi},
@@ -147,9 +147,9 @@ public:
     // ---------------------------------------------------------
     // Constructor2: 大部分情况下，就只要搜索一张图片
     //
-    ConfirmImageCmd(const char* name,
+    ConfirmImageCmd(const char*      name,
                     RegionOfInterest roi,
-                    const char* target)
+                    const char*      target)
         : Command{name},
           m_roi{roi}
     {
@@ -167,7 +167,7 @@ public:
     bool execute(Window& win) override;
 
 private:
-    RegionOfInterest m_roi;        //在窗口的这个区域内搜索
+    RegionOfInterest   m_roi;      //在窗口的这个区域内搜索
     ImageSearchTargets m_targets;  // 要搜索的图片，有一个符合，即成功
 };
 

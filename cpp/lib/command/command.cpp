@@ -10,6 +10,13 @@ namespace impl {
 
 using namespace autozhuxian;
 
+///
+/// 搜索目标图片的返回结果
+/// ---------------------------------------------------------
+/// 包括：
+/// 1. 可能找到的目标位置
+/// 2. 对应目标图片的尺寸信息 (如点击目标图片的中心）
+///
 struct FindLocRes {
     std::optional<cv::Point> loc;
     int                      width;
