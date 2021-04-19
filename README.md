@@ -12,4 +12,4 @@
 
 ### 3. 踩过的坑与心得
 
--   [Zero Initialize](docs/zero_initalize.md)
+-   [Zero Initialize](docs/zero_initialize.md)
