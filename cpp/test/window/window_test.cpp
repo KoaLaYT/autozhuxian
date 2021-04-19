@@ -9,6 +9,7 @@
 #include <imagesearch/screenshot.hpp>
 #include <command/command.hpp>
 #include <control/control.hpp>
+#include <util/common_task.hpp>
 
 #define BASE "C:\\Users\\koalayt\\Desktop\\autozhuxian\\assets\\"
 #define PATH(p) BASE p
@@ -158,11 +159,16 @@ private:
 
 TEST(window, close_window)
 {
-    screenshot_zx(PATH("tmp\\screen.png"));
+    // screenshot_zx(PATH("tmp\\screen.png"));
 
     auto zx = autozhuxian::find_window("诛仙3");
     ASSERT_TRUE(zx);
     SetForegroundWindow(zx->handle());
+
+    // autozhuxian::util::close_all_ui(zx.value());
+    // autozhuxian::util::open_ui(zx.value(), autozhuxian::util::UIType::Character);
+    auto info = autozhuxian::util::find_role(zx.value());
+    std::printf("这个窗口是：%s\n", info.name);
 
     // autozhuxian::ClickByImageCmd cmd{
     //     "关闭弹框",
@@ -172,6 +178,6 @@ TEST(window, close_window)
     // };
     // cmd.execute(zx.value());
 
-    RewardTask task;
-    task.run(zx.value());
+    // RewardTask task;
+    // task.run(zx.value());
 }

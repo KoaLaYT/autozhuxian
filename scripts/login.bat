@@ -1,0 +1,1 @@
+start "" C:\Users\koalayt\Desktop\autozhuxian\cpp\build\app\login\Release\login.exe
