@@ -21,6 +21,16 @@ struct FindLocRes {
     std::optional<cv::Point> loc;
     int                      width;
     int                      height;
+
+    FindLocRes() : loc{std::nullopt},
+                   width{0},
+                   height{0}
+    {}
+
+    FindLocRes(std::optional<cv::Point> l, int w, int h) : loc{l},
+                                                           width{w},
+                                                           height{h}
+    {}
 };
 
 ///
@@ -58,11 +68,11 @@ static FindLocRes find_location(Window&             win,
     // ---------------------------------------------------------
     if (!location) {
         std::printf("\t\t失败，未找到目标图片\n");
+        return FindLocRes{};
     } else {
         std::printf("\t\t找到目标图片，位置(%d, %d)\n", location->x, location->y);
+        return FindLocRes{location, ist->width(), ist->height()};
     }
-
-    return FindLocRes{location, ist->width(), ist->height()};
 }
 
 };  // namespace impl
