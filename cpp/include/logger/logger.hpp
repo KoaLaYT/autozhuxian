@@ -10,7 +10,6 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/daily_file_sink.h>
 
-// TODO change path
 #define BASE "C:\\Users\\koalayt\\Desktop\\autozhuxian\\logs\\"
 #define PATH(p) BASE p
 

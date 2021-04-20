@@ -14,6 +14,18 @@
 namespace autozhuxian {
 
 ///
+/// 常玩的角色
+/// ---------------------------------------------------------
+///
+///
+enum class RoleType {
+    HeHuan,  // 合欢
+    PoJun,   // 破军
+    TOTAL,
+    Unknown,  // 未知，用于搜索失败的情况
+};
+
+///
 /// 对win32窗口的封装
 /// ---------------------------------------------------------
 /// 包含窗口的标题、handle、尺寸等基本信息
@@ -40,8 +52,9 @@ public:
     // ---------------------------------------------------------
     // Getters
     //
-    HWND       handle() { return m_handle; }
-    WINDOWINFO window_info() { return m_window_info; }
+    HWND         handle() { return m_handle; }
+    WINDOWINFO   window_info() { return m_window_info; }
+    std::string& role_name() { return m_title; }
 
     // ---------------------------------------------------------
     // 窗口本身的位置，在相对坐标转绝对坐标时，需要加上
@@ -54,10 +67,20 @@ public:
     //
     RegionOfInterest roi();
 
+    // ---------------------------------------------------------
+    // 绑定窗口对应的角色信息
+    //
+    void bind_role(std::string name, RoleType type)
+    {
+        m_title = name;
+        m_type = type;
+    }
+
 private:
-    std::string m_title;        // 窗口标题
-    HWND        m_handle;       // 窗口handle
-    WINDOWINFO  m_window_info;  // 窗口信息
+    std::string m_title;                    // 窗口标题（角色名）
+    RoleType    m_type{RoleType::Unknown};  // 窗口对应的角色类型
+    HWND        m_handle;                   // 窗口handle
+    WINDOWINFO  m_window_info;              // 窗口信息
 
     // ---------------------------------------------------------
     // 计算win32 RECT的高度和宽度

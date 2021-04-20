@@ -167,8 +167,8 @@ TEST(window, close_window)
 
     // autozhuxian::util::close_all_ui(zx.value());
     // autozhuxian::util::open_ui(zx.value(), autozhuxian::util::UIType::Character);
-    auto info = autozhuxian::util::find_role(zx.value());
-    std::printf("这个窗口是：%s\n", info.name);
+    // auto info = autozhuxian::util::find_role(zx.value());
+    // std::printf("这个窗口是：%s\n", info.name);
 
     // autozhuxian::ClickByImageCmd cmd{
     //     "关闭弹框",
@@ -178,6 +178,6 @@ TEST(window, close_window)
     // };
     // cmd.execute(zx.value());
 
-    // RewardTask task;
-    // task.run(zx.value());
+    RewardTask task;
+    task.run(zx.value());
 }

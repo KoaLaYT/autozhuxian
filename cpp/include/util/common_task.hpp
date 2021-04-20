@@ -1,6 +1,7 @@
 #ifndef KOALAYT_COMMON_TASK_HPP_20210419
 #define KOALAYT_COMMON_TASK_HPP_20210419
 
+#include <vector>
 // project
 #include <window/window.hpp>
 
@@ -19,25 +20,13 @@ enum class UIType {
 };
 
 ///
-/// 常玩的角色
-/// ---------------------------------------------------------
-///
-///
-enum class RoleType {
-    HeHuan,  // 合欢
-    PoJun,   // 破军
-    TOTAL,
-    Unknown,  // 未知，用于搜索失败的情况
-};
-
-///
 /// 角色的信息
 /// ---------------------------------------------------------
 /// 包括类型及对应的名称
 ///
 struct RoleInfo {
-    autozhuxian::util::RoleType type;
-    const char*                 name;
+    autozhuxian::RoleType type;
+    const char*           name;
 };
 
 ///
@@ -68,6 +57,13 @@ void close_ui(Window& win, UIType type);
 /// 主要是为了之后的日志功能，输出时可以知道是哪个职业
 ///
 RoleInfo find_role(Window& win);
+
+///
+/// 找到所有的诛仙窗口
+/// ---------------------------------------------------------
+/// 并且会将窗口对应的角色关联起来
+///
+std::vector<Window> find_all_zx_wins();
 
 };  // namespace autozhuxian::util
 

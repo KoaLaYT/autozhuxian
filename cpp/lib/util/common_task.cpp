@@ -95,9 +95,9 @@ static std::unique_ptr<autozhuxian::Command> get_cmd(autozhuxian::util::UIType t
 /// ---------------------------------------------------------
 /// 即根据名字来找到对应的窗口
 ///
-static RoleInfo get_role_name(autozhuxian::util::RoleType type)
+static RoleInfo get_role_name(autozhuxian::RoleType type)
 {
-    using namespace autozhuxian::util;
+    using namespace autozhuxian;
     static std::map<RoleType, RoleInfo> infos{
         {RoleType::HeHuan, {PATH("hehuan.png"), "合欢"}},
         {RoleType::PoJun, {PATH("pojun.png"), "破军"}},
@@ -105,6 +105,33 @@ static RoleInfo get_role_name(autozhuxian::util::RoleType type)
     auto found = infos.find(type);
     AUTOZHUXIAN_ASSERT(found != infos.end(), "未定义的类型");
     return found->second;
+}
+
+///
+/// 搜索窗口的回调函数
+/// ---------------------------------------------------------
+///
+///
+static BOOL CALLBACK EnumWindowCb(HWND hwnd, LPARAM lParam)
+{
+    using ZXWindow = autozhuxian::Window;
+    CHAR title[1024];
+    int  length = GetWindowTextA(hwnd, title, sizeof(title));
+
+    // 有的无窗口应用还是会有hwnd，在这里过滤掉
+    if (!IsWindowVisible(hwnd) ||
+        length == 0 ||
+        std::strcmp(title, "Program Manager") == 0) {
+        return TRUE;
+    }
+
+    std::vector<ZXWindow>& result = *reinterpret_cast<std::vector<ZXWindow>*>(lParam);
+    if (std::strcmp(title, "诛仙3") == 0) {
+        std::printf("找到一个诛仙窗口\n");
+        result.push_back(ZXWindow{"诛仙3", hwnd});
+    }
+
+    return TRUE;
 }
 
 };  // namespace impl
@@ -163,9 +190,9 @@ void close_ui(Window& win, UIType type)
 }
 
 ///
-/// 找到窗口对应的角色
+/// 常用功能
 /// ---------------------------------------------------------
-/// 主要是为了之后的日志功能，输出时可以知道是哪个职业
+/// 找到窗口对应的角色
 ///
 RoleInfo find_role(Window& win)
 {
@@ -179,11 +206,31 @@ RoleInfo find_role(Window& win)
             info.path,
         };
         if (cmd.execute(win)) {
+            close_ui(win, UIType::Character);
             return RoleInfo{static_cast<RoleType>(i), info.name};
         }
     }
 
+    close_ui(win, UIType::Character);
     return RoleInfo{RoleType::Unknown, "未知角色"};
+}
+
+///
+/// 常用功能
+/// ---------------------------------------------------------
+/// 找到所有的诛仙窗口
+///
+std::vector<Window> find_all_zx_wins()
+{
+    std::vector<Window> wins;
+    EnumWindows(impl::EnumWindowCb, reinterpret_cast<LPARAM>(&wins));
+    for (auto& win : wins) {
+        SetForegroundWindow(win.handle());
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        auto info = find_role(win);
+        win.bind_role(info.name, info.type);
+    }
+    return wins;
 }
 
 };  // namespace autozhuxian::util
