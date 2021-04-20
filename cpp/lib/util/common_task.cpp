@@ -35,7 +35,7 @@ static void repeat(int n, std::function<void()> func)
 static void press_esc()
 {
     autozhuxian::press(VK_ESCAPE);
-    std::this_thread::sleep_for(100ms);
+    std::this_thread::sleep_for(300ms);
 }
 
 ///
