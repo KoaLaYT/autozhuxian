@@ -27,6 +27,7 @@ enum class RoleType {
     HeHuan,  // 合欢
     PoJun,   // 破军
     TOTAL,
+    Unknown,  // 未知，用于搜索失败的情况
 };
 
 ///

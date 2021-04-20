@@ -7,6 +7,7 @@
 #include <util/common_task.hpp>
 #include <control/control.hpp>
 #include <command/command.hpp>
+#include <macro/assert.hpp>
 
 #define BASE "C:\\Users\\koalayt\\Desktop\\autozhuxian\\assets\\common\\"
 #define PATH(p) BASE p
@@ -71,8 +72,9 @@ static UIPos get_pos(autozhuxian::util::UIType type)
         {UIType::PVP, {"打开竞技", {1490, 988}}},
         {UIType::Character, {"打开角色", {1270, 988}}},
     };
-    // TODO check
-    return infos[type];
+    auto found = infos.find(type);
+    AUTOZHUXIAN_ASSERT(found != infos.end(), "未定义的类型")
+    return found->second;
 }
 
 ///
@@ -100,8 +102,9 @@ static RoleInfo get_role_name(autozhuxian::util::RoleType type)
         {RoleType::HeHuan, {PATH("hehuan.png"), "合欢"}},
         {RoleType::PoJun, {PATH("pojun.png"), "破军"}},
     };
-    // TODO check
-    return infos[type];
+    auto found = infos.find(type);
+    AUTOZHUXIAN_ASSERT(found != infos.end(), "未定义的类型")
+    return found->second;
 }
 
 };  // namespace impl
@@ -167,6 +170,7 @@ void close_ui(Window& win, UIType type)
 RoleInfo find_role(Window& win)
 {
     open_ui(win, UIType::Character);
+
     for (int i = 0; i < static_cast<int>(RoleType::TOTAL); ++i) {
         impl::RoleInfo  info = impl::get_role_name(static_cast<RoleType>(i));
         ConfirmImageCmd cmd{
@@ -178,7 +182,8 @@ RoleInfo find_role(Window& win)
             return RoleInfo{static_cast<RoleType>(i), info.name};
         }
     }
-    // TODO what about not find?
+
+    return RoleInfo{RoleType::Unknown, "未知角色"};
 }
 
 };  // namespace autozhuxian::util
