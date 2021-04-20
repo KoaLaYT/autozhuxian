@@ -73,7 +73,7 @@ static UIPos get_pos(autozhuxian::util::UIType type)
         {UIType::Character, {"打开角色", {1270, 988}}},
     };
     auto found = infos.find(type);
-    AUTOZHUXIAN_ASSERT(found != infos.end(), "未定义的类型")
+    AUTOZHUXIAN_ASSERT(found != infos.end(), "未定义的类型");
     return found->second;
 }
 
@@ -85,9 +85,9 @@ static UIPos get_pos(autozhuxian::util::UIType type)
 static std::unique_ptr<autozhuxian::Command> get_cmd(autozhuxian::util::UIType type)
 {
     auto info = impl::get_pos(type);
-    return std::make_unique<ClickByPositionCmd>(info.name,
-                                                info.pos,
-                                                300);
+    return std::make_unique<autozhuxian::ClickByPositionCmd>(info.name,
+                                                             info.pos,
+                                                             300);
 }
 
 ///
@@ -103,7 +103,7 @@ static RoleInfo get_role_name(autozhuxian::util::RoleType type)
         {RoleType::PoJun, {PATH("pojun.png"), "破军"}},
     };
     auto found = infos.find(type);
-    AUTOZHUXIAN_ASSERT(found != infos.end(), "未定义的类型")
+    AUTOZHUXIAN_ASSERT(found != infos.end(), "未定义的类型");
     return found->second;
 }
 
