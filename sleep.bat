@@ -1,1 +1,0 @@
-psshutdown -d -t 0
