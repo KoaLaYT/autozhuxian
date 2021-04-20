@@ -127,3 +127,7 @@ dmypy.json
 cpp/.vscode
 cpp/build
 assets/
+logs/
+scripts/
+sleep.bat
+wake.bat
