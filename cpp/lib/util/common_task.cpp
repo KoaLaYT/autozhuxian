@@ -13,6 +13,8 @@
 
 namespace impl {
 
+using namespace std::chrono_literals;
+
 ///
 /// 反复运行某个lambda
 /// ---------------------------------------------------------
@@ -24,11 +26,32 @@ static void repeat(int n, std::function<void()> func)
         func();
 }
 
+///
+/// 按ESC后等待一小段时间
+/// ---------------------------------------------------------
+/// 通过ESC来确保关闭一些窗口
+///
+static void press_esc()
+{
+    autozhuxian::press(VK_ESCAPE);
+    std::this_thread::sleep_for(100ms);
+}
+
+///
+/// 常用UI的名称及其对应的坐标位置
+/// ---------------------------------------------------------
+///
+///
 struct UIPos {
     const char* name;
     cv::Point   pos;
 };
 
+///
+/// 常玩的角色名称及其图片的路径
+/// ---------------------------------------------------------
+///
+///
 struct RoleInfo {
     const char* path;
     const char* name;
@@ -39,7 +62,7 @@ struct RoleInfo {
 /// ---------------------------------------------------------
 ///
 ///
-static UIPos get_ui_pos(autozhuxian::util::UIType type)
+static UIPos get_pos(autozhuxian::util::UIType type)
 {
     using namespace autozhuxian::util;
     static std::map<UIType, UIPos> infos{
@@ -50,6 +73,19 @@ static UIPos get_ui_pos(autozhuxian::util::UIType type)
     };
     // TODO check
     return infos[type];
+}
+
+///
+/// 获取点击某个UI按钮的命令
+/// ---------------------------------------------------------
+///
+///
+static std::unique_ptr<autozhuxian::Command> get_cmd(autozhuxian::util::UIType type)
+{
+    auto info = impl::get_pos(type);
+    return std::make_unique<ClickByPositionCmd>(info.name,
+                                                info.pos,
+                                                300);
 }
 
 ///
@@ -70,27 +106,25 @@ static RoleInfo get_role_name(autozhuxian::util::RoleType type)
 
 };  // namespace impl
 
-namespace autozhuxian::util {
+// ------------------------------------------------------------------------------- //
+// ---------------------------------DIVIDER--------------------------------------- //
+// ------------------------------------------------------------------------------- //
 
-using namespace std::chrono_literals;
+namespace autozhuxian::util {
 
 ///
 /// 常用功能
 /// ---------------------------------------------------------
 /// 关闭所有的弹出框
+/// 用于登录后，关闭领取奖励和更新说明的弹框
 ///
 void close_all_ui(Window& win)
 {
-    auto press_esc = []() {
-        press(VK_ESCAPE);
-        std::this_thread::sleep_for(100ms);
-    };
-
-    impl::repeat(5, press_esc);
+    impl::repeat(5, impl::press_esc);
     open_ui(win, UIType::Reward);
-    press_esc();
+    impl::press_esc();
     open_ui(win, UIType::Update);
-    press_esc();
+    impl::press_esc();
 }
 
 ///
@@ -100,20 +134,29 @@ void close_all_ui(Window& win)
 ///
 void open_ui(Window& win, UIType type)
 {
-    auto               info = impl::get_ui_pos(type);
-    ClickByPositionCmd cmd{
-        info.name,
-        info.pos,
-        300,
-    };
+    auto cmd = impl::get_cmd(type);
     // 为了防止打开前，该ui已经打开，
     // 这里处理的方式是先点击打开按钮，然后esc取消，这时确保了ui一定处于关闭状态
     // 然后再打开即可
     // ---------------------------------------------------------
-    cmd.execute(win);
-    press(VK_ESCAPE);
-    std::this_thread::sleep_for(100ms);
-    cmd.execute(win);
+    cmd->execute(win);
+    impl::press_esc();
+    cmd->execute(win);
+}
+
+///
+/// 常用功能
+/// ---------------------------------------------------------
+/// 关闭常见的UI界面
+///
+void close_ui(Window& win, UIType type)
+{
+    auto cmd = impl::get_cmd(type);
+    // 这样无论该UI是否已经打开
+    // 通过一次点开关闭的操作后，一定处于关闭状态
+    // ---------------------------------------------------------
+    cmd->execute(win);
+    impl::press_esc();
 }
 
 ///
