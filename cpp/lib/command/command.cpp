@@ -6,42 +6,32 @@
 #include <imagesearch/screenshot.hpp>
 #include <imagesearch/match.hpp>
 
-namespace impl {
+// ------------------------------------------------------------------------------- //
+// ---------------------------------DIVIDER--------------------------------------- //
+// ------------------------------------------------------------------------------- //
 
-using namespace autozhuxian;
+namespace autozhuxian {
 
 ///
-/// 搜索目标图片的返回结果
+/// 所有操作的公共方法
 /// ---------------------------------------------------------
-/// 包括：
-/// 1. 可能找到的目标位置
-/// 2. 对应目标图片的尺寸信息 (如点击目标图片的中心）
+/// 等待一段时间
 ///
-struct FindLocRes {
-    std::optional<cv::Point> loc;
-    int                      width;
-    int                      height;
-
-    FindLocRes() : loc{std::nullopt},
-                   width{0},
-                   height{0}
-    {}
-
-    FindLocRes(std::optional<cv::Point> l, int w, int h) : loc{l},
-                                                           width{w},
-                                                           height{h}
-    {}
-};
+void Command::wait(int ms)
+{
+    if (ms > 0) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+    }
+}
 
 ///
+/// 所有操作的公共方法
+/// ---------------------------------------------------------
 /// 在窗口的ROI中搜索目标图片的位置
-/// ---------------------------------------------------------
-/// 在多个cmd中反复出现的逻辑
-//? 搬到Command中
 ///
-static FindLocRes find_location(Window&             win,
-                                RegionOfInterest&   roi,
-                                ImageSearchTargets& targets)
+Command::FindLocRes Command::find_location(Window&             win,
+                                           RegionOfInterest&   roi,
+                                           ImageSearchTargets& targets)
 {
     // 鼠标移到左上角，防止影响图像匹配
     // ---------------------------------------------------------
@@ -64,34 +54,14 @@ static FindLocRes find_location(Window&             win,
         ist++;
     }
 
-    // 搜索结束 // TODO logger
+    // 搜索结束
     // ---------------------------------------------------------
     if (!location) {
-        std::printf("\t\t失败，未找到目标图片\n");
+        info("<{}> 失败，未找到目标图片", win.role_name());
         return FindLocRes{};
     } else {
-        std::printf("\t\t找到目标图片，位置(%d, %d)\n", location->x, location->y);
+        info("<{}> 找到目标图片，位置({}, {})", win.role_name(), location->x, location->y);
         return FindLocRes{location, ist->width(), ist->height()};
-    }
-}
-
-};  // namespace impl
-
-// ------------------------------------------------------------------------------- //
-// ---------------------------------DIVIDER--------------------------------------- //
-// ------------------------------------------------------------------------------- //
-
-namespace autozhuxian {
-
-///
-/// 所有操作的公共方法
-/// ---------------------------------------------------------
-/// 等待一段时间
-///
-void Command::wait(int ms)
-{
-    if (ms > 0) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(ms));
     }
 }
 
@@ -102,27 +72,26 @@ void Command::wait(int ms)
 ///
 bool ClickByImageCmd::execute(Window& win)
 {
-    // TODO logger, move to Command
-    std::printf("\t执行操作：%s\n", m_name);
-
     // 寻找目标坐标
     // ---------------------------------------------------------
-    auto result = impl::find_location(win, m_roi, m_targets);
-    if (!result.loc) return false;
+    auto result = find_location(win, m_roi, m_targets);
+    if (!result.loc) {
+        info("<{}> 执行操作 [{}] 失败", win.role_name(), m_name);
+        return false;
+    }
 
     // 点击目标图片的中心
     // = 窗口偏移 + roi + location + 目标图片尺寸 / 2
     // ---------------------------------------------------------
     int x = win.x() + m_roi.x + result.loc->x + result.width / 2;
     int y = win.y() + m_roi.y + result.loc->y + result.height / 2;
-    // TODO logger
-    std::printf("\t\t鼠标点击(%d, %d)\n", x, y);
     click(x, y);
 
     // 等待UI变化
     // ---------------------------------------------------------
     Command::wait(m_wait);
 
+    info("<{}> 执行操作 [{}] 成功（图片坐标 {}，{}）", win.role_name(), m_name, x, y);
     return true;
 }
 
@@ -133,21 +102,17 @@ bool ClickByImageCmd::execute(Window& win)
 ///
 bool ClickByPositionCmd::execute(Window& win)
 {
-    // TODO logger, move to Command
-    std::printf("\t执行操作：%s\n", m_name);
-
     // 点击目标位置
     // ---------------------------------------------------------
     int x = win.x() + m_position.x;
     int y = win.y() + m_position.y;
-    // TODO logger
-    std::printf("\t\t鼠标点击(%d, %d)\n", x, y);
     click(x, y);
 
     // 等待UI变化
     // ---------------------------------------------------------
     Command::wait(m_wait);
 
+    info("<{}> 执行操作 [{}] 成功（点击坐标 {}，{}）", win.role_name(), m_name, x, y);
     return true;
 }
 
@@ -161,8 +126,11 @@ bool ConfirmImageCmd::execute(Window& win)
     // TODO logger, move to Command
     std::printf("\t执行操作：%s\n", m_name);
 
-    auto result = impl::find_location(win, m_roi, m_targets);
-    return result.loc.has_value();
+    auto result = find_location(win, m_roi, m_targets);
+    bool is_success = result.loc.has_value();
+
+    info("<{}> 执行操作 [{}] {}", win.role_name(), m_name, is_success ? "成功" : "失败");
+    return is_success;
 }
 
 };  // namespace autozhuxian

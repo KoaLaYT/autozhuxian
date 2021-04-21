@@ -5,5 +5,5 @@ target_include_directories("command" PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(
     "command" 
     PUBLIC
-    imagesearch control window
+    imagesearch control window logger
 )

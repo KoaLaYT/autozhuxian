@@ -6,6 +6,7 @@
 // project
 #include <window/window.hpp>
 #include <imagesearch/match.hpp>
+#include <logger/logger.hpp>
 
 namespace autozhuxian {
 
@@ -16,7 +17,7 @@ using ImageSearchTargets = std::vector<ImageSearchTarget>;
 /// ---------------------------------------------------------
 /// 作为所有的操作的base class，里面定义了一些公共的方法
 ///
-class Command {
+class Command : public Logger<Command> {
 public:
     // ---------------------------------------------------------
     // Constructor
@@ -36,10 +37,42 @@ public:
 protected:
     const char* m_name;  // 操作名称
 
+    ///
+    /// 搜索目标图片的返回结果
+    /// ---------------------------------------------------------
+    /// 包括：
+    /// 1. 可能找到的目标位置
+    /// 2. 对应目标图片的尺寸信息 (如点击目标图片的中心）
+    ///
+    struct FindLocRes {
+        std::optional<cv::Point> loc;
+        int                      width;
+        int                      height;
+
+        FindLocRes() : loc{std::nullopt},
+                       width{0},
+                       height{0}
+        {}
+
+        FindLocRes(std::optional<cv::Point> l, int w, int h) : loc{l},
+                                                               width{w},
+                                                               height{h}
+        {}
+    };
+
     // ---------------------------------------------------------
     // 等待一段时间
     //
     void wait(int ms);
+
+    ///
+    /// 在窗口的ROI中搜索目标图片的位置
+    /// ---------------------------------------------------------
+    /// 在多个cmd中反复出现的逻辑
+    ///
+    FindLocRes find_location(Window&             win,
+                             RegionOfInterest&   roi,
+                             ImageSearchTargets& targets);
 };
 
 ///

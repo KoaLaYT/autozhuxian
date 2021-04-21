@@ -2,30 +2,28 @@
 #define KOALAYT_LOGGER_HPP_20210420
 
 // std
+#ifndef _MSC_VER
 #include <cxxabi.h>
+#endif
 #include <vector>
 // third party
 #include <spdlog/spdlog.h>
-#include <spdlog/async.h>
+// #include <spdlog/async.h> // win10 下程序无法退出, spdlog::shutdown也没用
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/daily_file_sink.h>
 
-#define BASE "C:\\Users\\koalayt\\Desktop\\autozhuxian\\logs\\"
-#define PATH(p) BASE p
-
-constexpr int LOG_QUEUE_SIZE = 8192;
-constexpr int LOG_THREADS = 1;
+#define LOG_BASE "C:\\Users\\koalayt\\Desktop\\autozhuxian\\logs\\"
+#define LOG_PATH(p) LOG_BASE p
 
 namespace impl {
 
 template <typename T>
 static std::shared_ptr<spdlog::logger> create_logger()
 {
-    static auto tp = std::make_shared<spdlog::details::thread_pool>(LOG_QUEUE_SIZE, LOG_THREADS);
     // release版本才需要保存日志到文件，debug下只输出到console
     // ---------------------------------------------------------
 #ifdef NDEBUG
-    static auto shared_file_sink = std::make_shared<spdlog::sinks::daily_file_sink_st>(PATH("log.txt"), 0, 30);
+    static auto shared_file_sink = std::make_shared<spdlog::sinks::daily_file_sink_st>(LOG_PATH("log.txt"), 0, 30);
 #endif
 
     std::vector<spdlog::sink_ptr> sinks{
@@ -35,13 +33,18 @@ static std::shared_ptr<spdlog::logger> create_logger()
 #endif
     };
 
-    // demangle type
-    // https://stackoverflow.com/questions/3649278/how-can-i-get-the-class-name-from-a-c-object
-    // ---------------------------------------------------------
+// demangle type, only working in gcc
+// https://stackoverflow.com/questions/3649278/how-can-i-get-the-class-name-from-a-c-object
+// ---------------------------------------------------------
+#ifdef _MSC_VER
+    auto logger = std::make_shared<spdlog::logger>(typeid(T).name(), sinks.begin(), sinks.end());
+#elif
     int   status;
     char* name = abi::__cxa_demangle(typeid(T).name(), 0, 0, &status);
-    auto  logger = std::make_shared<spdlog::async_logger>(name, sinks.begin(), sinks.end(), tp);
+    auto  logger = std::make_shared<spdlog::logger>(name, sinks.begin(), sinks.end());
     delete name;
+#endif
+
 #ifndef NDEBUG
     logger->set_level(spdlog::level::debug);
 #endif
