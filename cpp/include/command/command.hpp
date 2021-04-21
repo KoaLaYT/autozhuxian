@@ -89,7 +89,7 @@ public:
     {}
 
     // ---------------------------------------------------------
-    // Constructor3: 默认整个窗口都是搜索区域（单张图片）
+    // Constructor4: 默认整个窗口都是搜索区域（单张图片）
     //
     ClickByImageCmd(const char* name,
                     const char* target,
@@ -179,6 +179,25 @@ public:
     {
         m_targets.emplace_back(target);
     }
+
+    // ---------------------------------------------------------
+    // Constructor3: 默认整个窗口是搜索区域（多张图片）
+    //
+    ConfirmImageCmd(const char*          name,
+                    ImageSearchTargets&& targets)
+        : ConfirmImageCmd{name,
+                          RegionOfInterest::whole,
+                          std::move(targets)}
+    {}
+
+    // ---------------------------------------------------------
+    // Constructor4: 默认整个窗口是搜索区域（单张图片）
+    //
+    ConfirmImageCmd(const char* name, const char* target)
+        : ConfirmImageCmd{name,
+                          RegionOfInterest::whole,
+                          target}
+    {}
 
     // ---------------------------------------------------------
     // Destructor
