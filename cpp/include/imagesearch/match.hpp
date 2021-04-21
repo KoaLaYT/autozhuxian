@@ -8,6 +8,8 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
 #include <fmt/core.h>
+// project
+#include <logger/logger.hpp>
 
 namespace autozhuxian {
 
@@ -87,7 +89,7 @@ private:
 /// ---------------------------------------------------------
 /// 封装了常用的两种匹配方法
 ///
-class Matcher {
+class Matcher : public Logger<Matcher> {
 public:
     // ---------------------------------------------------------
     // Constructor：带自定义置信度

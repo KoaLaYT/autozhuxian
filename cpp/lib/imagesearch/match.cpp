@@ -27,8 +27,7 @@ std::optional<cv::Point> Matcher::search(const cv::Mat& templ)
     double    best_value;
     cv::minMaxLoc(result, &best_value, NULL, &best_loc, NULL);
 
-    // TODO replace with logger
-    std::printf("best value is: %.3f\n", best_value);
+    info(">>>图片搜索最佳值: {:.3f}，置信度：{:.3f}", best_value, m_confidence);
 
     // for cv::TM_SQDIFF_NORMED,
     // best_value is between [0, 1] where 0 is the best
@@ -68,9 +67,8 @@ std::optional<cv::Point> Matcher::search_with_mask(const cv::Mat& templ, const c
     cv::minMaxLoc(result_m1, NULL, NULL, &best_loc_m1, NULL);
     cv::minMaxLoc(result_m2, NULL, &best_value_m2, NULL, &best_loc_m2);
 
-    // TODO replace with logger
-    std::printf("      TM_SQDIFF: (%d, %d)\n", best_loc_m1.x, best_loc_m1.y);
-    std::printf("TM_CCORR_NORMED: (%d, %d), best value: %.3f\n", best_loc_m2.x, best_loc_m2.y, best_value_m2);
+    info(">>>      TM_SQDIFF: ({}, {})", best_loc_m1.x, best_loc_m1.y);
+    info(">>>TM_CCORR_NORMED: ({}, {}), 最佳值: {:.3f}，置信度：{:.3f}", best_loc_m2.x, best_loc_m2.y, best_value_m2, m_confidence);
 
     // 当且仅当两者位置相同，且满足置信度时，才认为找到了目标图片
     // ---------------------------------------------------------

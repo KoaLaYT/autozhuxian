@@ -7,5 +7,5 @@ if(OpenCV_FOUND)
   link_directories(${OpenCV_LIB_DIR})
 
   # Additional Dependencies
-  target_link_libraries(imagesearch PRIVATE ${OpenCV_LIBS} fmt::fmt)
+  target_link_libraries(imagesearch PRIVATE ${OpenCV_LIBS} fmt::fmt logger)
 endif()
