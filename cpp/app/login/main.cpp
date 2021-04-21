@@ -24,7 +24,6 @@ struct ZXWindowManager {
 
         std::vector<ZXWindow>& result = *reinterpret_cast<std::vector<ZXWindow>*>(lParam);
         if (std::strcmp(title, "诛仙3") == 0) {
-            std::printf("找到一个诛仙窗口\n");
             result.push_back(ZXWindow{"诛仙3", hwnd});
         }
 
@@ -42,7 +41,6 @@ int main()
     LaunchTask launch;
     launch.run();
 
-    std::printf("诛仙已开始\n");
     ZXWindowManager zxwm;
 
     for (auto& win : zxwm.windows) {

@@ -32,7 +32,7 @@ private:
 /// ---------------------------------------------------------
 /// 从启动器启动诛仙，包括处理游戏更新
 ///
-class LaunchTask {
+class LaunchTask : public Logger<LaunchTask> {
 public:
     LaunchTask() { init(); }
 

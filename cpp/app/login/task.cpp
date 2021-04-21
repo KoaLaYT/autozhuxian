@@ -59,13 +59,16 @@ void LoginTask::run(Window& win)
 ///
 void LaunchTask::init()
 {
+    info("{:-^30}", "");
+    info("{}", "开始启动游戏");
+    info("{:-^30}", "");
     while (true) {
         auto platform = find_window("完美游戏平台");
         if (!platform) {
-            std::printf("完美游戏平台未启动，尝试打开\n");
+            info("完美游戏平台未启动，尝试打开");
             open_platform();
         } else {
-            std::printf("完美游戏平台已打开\n");
+            info("完美游戏平台已打开");
             m_platform = platform.value();
             break;
         }
@@ -122,11 +125,11 @@ void LaunchTask::wait_updated(Window& win)
     // ---------------------------------------------------------
     ConfirmImageCmd cmd{"检查游戏更新是否完成", PATH("start_game.png")};
     while (!cmd.execute(win)) {
-        std::printf("游戏正在更新\n");
+        info("游戏正在更新");
         // 没更新好就等5秒，再检查一遍
         std::this_thread::sleep_for(5'000ms);
     }
-    std::printf("游戏已更新\n");
+    info("游戏已更新");
 }
 
 ///
