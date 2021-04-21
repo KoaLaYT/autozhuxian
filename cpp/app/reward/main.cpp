@@ -19,22 +19,17 @@ public:
 
         std::vector<std::unique_ptr<Command>> cmds;
         cmds.emplace_back(std::make_unique<ClickByImageCmd>("点击签到奖励",
-                                                            RegionOfInterest::whole,
                                                             ImageSearchTargets{{PATH("signup.png")},
                                                                                {PATH("signup_selected.png")}},
-
                                                             200));
         cmds.emplace_back(std::make_unique<ClickByImageCmd>("领取签到奖励",
-                                                            RegionOfInterest::whole,
                                                             PATH("signup_confirm.png"),
                                                             200));
         cmds.emplace_back(std::make_unique<ClickByImageCmd>("点击升级奖励",
-                                                            RegionOfInterest::whole,
                                                             ImageSearchTargets{{PATH("levelup.png")},
                                                                                {PATH("levelup_selected.png")}},
                                                             200));
         cmds.emplace_back(std::make_unique<ClickByImageCmd>("领取升级奖励",
-                                                            RegionOfInterest::whole,
                                                             PATH("levelup_confirm.png"),
                                                             200));
         for (auto& cmd : cmds) cmd->execute(win);

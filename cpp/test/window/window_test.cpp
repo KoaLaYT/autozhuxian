@@ -60,7 +60,6 @@ TEST(window, close_window)
 
     // autozhuxian::ClickByImageCmd cmd{
     //     "关闭弹框",
-    //     autozhuxian::RegionOfInterest::whole,
     //     PATH("common\\close_btn.png"),
     //     0,
     // };

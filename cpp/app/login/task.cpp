@@ -90,7 +90,6 @@ void LaunchTask::run()
     {
         ClickByImageCmd cmd{
             "点击游戏多开",
-            RegionOfInterest::whole,
             PATH("multiopen.png"),
             1000,
         };
@@ -144,7 +143,6 @@ void LaunchTask::open_platform()
     Window          desktop{"桌面", GetDesktopWindow()};
     ClickByImageCmd cmd{
         "点击开始屏幕中的完美游戏平台icon",
-        RegionOfInterest::whole,
         PATH("wanmei_platform.png"),
         30'000,
     };
