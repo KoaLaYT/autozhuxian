@@ -120,11 +120,7 @@ void LaunchTask::wait_updated(Window& win)
 {
     // 循环判断游戏是否更新完成
     // ---------------------------------------------------------
-    ConfirmImageCmd cmd{
-        "检查游戏更新是否完成",
-        RegionOfInterest::whole,
-        PATH("start_game.png"),
-    };
+    ConfirmImageCmd cmd{"检查游戏更新是否完成", PATH("start_game.png")};
     while (!cmd.execute(win)) {
         std::printf("游戏正在更新\n");
         // 没更新好就等5秒，再检查一遍

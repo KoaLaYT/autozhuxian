@@ -201,11 +201,7 @@ RoleInfo find_role(Window& win)
 
     for (int i = 0; i < static_cast<int>(RoleType::TOTAL); ++i) {
         impl::RoleInfo  info = impl::get_role_name(static_cast<RoleType>(i));
-        ConfirmImageCmd cmd{
-            "寻找窗口对应的角色",
-            RegionOfInterest::whole,
-            info.path,
-        };
+        ConfirmImageCmd cmd{"寻找窗口对应的角色", info.path};
         if (cmd.execute(win)) {
             close_ui(win, UIType::Character);
             return RoleInfo{static_cast<RoleType>(i), info.name};
