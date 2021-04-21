@@ -77,6 +77,30 @@ public:
     }
 
     // ---------------------------------------------------------
+    // Constructor3: 默认整个窗口都是搜索区域（多张图片）
+    //
+    ClickByImageCmd(const char*          name,
+                    ImageSearchTargets&& targets,
+                    int                  wait)
+        : ClickByImageCmd{name,
+                          RegionOfInterest::whole,
+                          std::move(targets),
+                          wait}
+    {}
+
+    // ---------------------------------------------------------
+    // Constructor3: 默认整个窗口都是搜索区域（单张图片）
+    //
+    ClickByImageCmd(const char* name,
+                    const char* target,
+                    int         wait)
+        : ClickByImageCmd{name,
+                          RegionOfInterest::whole,
+                          target,
+                          wait}
+    {}
+
+    // ---------------------------------------------------------
     // Destructor
     //
     ~ClickByImageCmd() override = default;
