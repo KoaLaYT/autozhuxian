@@ -65,6 +65,14 @@ RoleInfo find_role(Window& win);
 ///
 std::vector<Window> find_all_zx_wins();
 
+///
+/// 把窗口调到前台
+/// ---------------------------------------------------------
+/// 只有在前台的窗口，UI才会更新，
+/// 鼠标、键盘的指令才能正常作用
+///
+void activate(Window& win);
+
 };  // namespace autozhuxian::util
 
 #endif

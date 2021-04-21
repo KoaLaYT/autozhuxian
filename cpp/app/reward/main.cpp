@@ -13,7 +13,7 @@ class RewardTask {
 public:
     void run(Window& win)
     {
-        SetForegroundWindow(win.handle());
+        util::activate(win);
         util::close_all_ui(win);
         util::open_ui(win, util::UIType::Reward);
 
@@ -38,6 +38,7 @@ public:
                                                             PATH("levelup_confirm.png"),
                                                             200));
         for (auto& cmd : cmds) cmd->execute(win);
+
         util::close_ui(win, util::UIType::Reward);
     }
 };

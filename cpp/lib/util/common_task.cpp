@@ -12,9 +12,9 @@
 #define BASE "C:\\Users\\koalayt\\Desktop\\autozhuxian\\assets\\common\\"
 #define PATH(p) BASE p
 
-namespace impl {
-
 using namespace std::chrono_literals;
+
+namespace impl {
 
 ///
 /// 反复运行某个lambda
@@ -196,6 +196,7 @@ void close_ui(Window& win, UIType type)
 ///
 RoleInfo find_role(Window& win)
 {
+    activate(win);
     open_ui(win, UIType::Character);
 
     for (int i = 0; i < static_cast<int>(RoleType::TOTAL); ++i) {
@@ -225,12 +226,21 @@ std::vector<Window> find_all_zx_wins()
     std::vector<Window> wins;
     EnumWindows(impl::EnumWindowCb, reinterpret_cast<LPARAM>(&wins));
     for (auto& win : wins) {
-        SetForegroundWindow(win.handle());
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
         auto info = find_role(win);
         win.bind_role(info.name, info.type);
     }
     return wins;
+}
+
+///
+/// 常用功能
+/// ---------------------------------------------------------
+/// 把窗口调到前台
+///
+void activate(Window& win)
+{
+    SetForegroundWindow(win.handle());
+    std::this_thread::sleep_for(500ms);  // 确保真的调到了前台
 }
 
 };  // namespace autozhuxian::util
