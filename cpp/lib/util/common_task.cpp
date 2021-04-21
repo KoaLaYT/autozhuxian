@@ -12,6 +12,8 @@
 #define BASE "C:\\Users\\koalayt\\Desktop\\autozhuxian\\assets\\common\\"
 #define PATH(p) BASE p
 
+#define CLICKUI(p) "点击界面：" p
+
 using namespace std::chrono_literals;
 
 namespace impl {
@@ -67,10 +69,10 @@ static UIPos get_pos(autozhuxian::util::UIType type)
 {
     using namespace autozhuxian::util;
     static std::map<UIType, UIPos> infos{
-        {UIType::Reward, {"打开奖励界面", {1418, 115}}},
-        {UIType::Update, {"打开更新说明", {1479, 203}}},
-        {UIType::PVP, {"打开竞技", {1490, 988}}},
-        {UIType::Character, {"打开角色", {1270, 988}}},
+        {UIType::Reward, {CLICKUI("奖励"), {1418, 115}}},
+        {UIType::Update, {CLICKUI("更新"), {1479, 203}}},
+        {UIType::PVP, {CLICKUI("竞技"), {1490, 988}}},
+        {UIType::Character, {CLICKUI("角色"), {1270, 988}}},
     };
     auto found = infos.find(type);
     AUTOZHUXIAN_ASSERT(found != infos.end(), "未定义的类型");
