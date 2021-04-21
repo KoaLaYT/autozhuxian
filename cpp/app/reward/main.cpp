@@ -9,10 +9,14 @@
 
 using namespace autozhuxian;
 
-class RewardTask {
+class RewardTask : public Logger<RewardTask> {
 public:
     void run(Window& win)
     {
+        info("{:-^30}", "");
+        info("<{}> 开始领取奖励", win.role_name());
+        info("{:-^30}", "");
+
         util::activate(win);
         util::close_all_ui(win);
         util::open_ui(win, util::UIType::Reward);

@@ -89,7 +89,7 @@ static std::unique_ptr<autozhuxian::Command> get_cmd(autozhuxian::util::UIType t
     auto info = impl::get_pos(type);
     return std::make_unique<autozhuxian::ClickByPositionCmd>(info.name,
                                                              info.pos,
-                                                             300);
+                                                             1'000);
 }
 
 ///
@@ -129,7 +129,6 @@ static BOOL CALLBACK EnumWindowCb(HWND hwnd, LPARAM lParam)
 
     std::vector<ZXWindow>& result = *reinterpret_cast<std::vector<ZXWindow>*>(lParam);
     if (std::strcmp(title, "诛仙3") == 0) {
-        std::printf("找到一个诛仙窗口\n");
         result.push_back(ZXWindow{"诛仙3", hwnd});
     }
 
