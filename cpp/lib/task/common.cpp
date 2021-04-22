@@ -65,9 +65,9 @@ struct RoleInfo {
 /// ---------------------------------------------------------
 ///
 ///
-static UIPos get_pos(autozhuxian::util::UIType type)
+static UIPos get_pos(autozhuxian::common_task::UIType type)
 {
-    using namespace autozhuxian::util;
+    using namespace autozhuxian::common_task;
     static std::map<UIType, UIPos> infos{
         {UIType::Reward, {CLICKUI("奖励"), {1418, 115}}},
         {UIType::Update, {CLICKUI("更新"), {1479, 203}}},
@@ -84,7 +84,7 @@ static UIPos get_pos(autozhuxian::util::UIType type)
 /// ---------------------------------------------------------
 ///
 ///
-static std::unique_ptr<autozhuxian::Command> get_cmd(autozhuxian::util::UIType type)
+static std::unique_ptr<autozhuxian::Command> get_cmd(autozhuxian::common_task::UIType type)
 {
     auto info = impl::get_pos(type);
     return std::make_unique<autozhuxian::ClickByPositionCmd>(info.name,
