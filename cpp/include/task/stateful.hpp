@@ -138,9 +138,9 @@ public:
     // ---------------------------------------------------------
     // Constructor: 每个窗口绑定一个StatefulTask
     //
-    explicit Scheduler(const char*                      name,
-                       typename StatefulTask::Timepoint endtime,
-                       std::vector<Window>&             wins)
+    Scheduler(const char*                      name,
+              typename StatefulTask::Timepoint endtime,
+              std::vector<Window>&             wins)
         : m_name{name},
           m_endtime{endtime}
     {
