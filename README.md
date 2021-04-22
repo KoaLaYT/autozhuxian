@@ -13,3 +13,4 @@
 ### 3. 踩过的坑与心得
 
 -   [Zero Initialize](docs/zero_initialize.md)
+-   [When to Put typename](https://stackoverflow.com/questions/610245/where-and-why-do-i-have-to-put-the-template-and-typename-keywords)
