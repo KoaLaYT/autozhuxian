@@ -58,9 +58,8 @@ void LoginTask::run(Window& win)
 ///
 void LaunchTask::init()
 {
-    info("{:-^30}", "");
-    info("{}", "开始启动游戏");
-    info("{:-^30}", "");
+    log_block("启动游戏");
+
     while (true) {
         auto platform = find_window("完美游戏平台");
         if (!platform) {

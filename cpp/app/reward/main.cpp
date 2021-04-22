@@ -13,11 +13,9 @@ class RewardTask : public Logger<RewardTask> {
 public:
     void run(Window& win)
     {
-        info("{:-^30}", "");
-        info("<{}> 开始领取奖励", win.role_name());
-        info("{:-^30}", "");
+        log_block(win.role_name(), "领取奖励")
 
-        common_task::activate(win);
+            common_task::activate(win);
         common_task::close_all_ui(win);
         common_task::open_ui(win, common_task::UIType::Reward);
 

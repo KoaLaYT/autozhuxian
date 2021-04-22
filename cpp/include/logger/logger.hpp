@@ -97,6 +97,20 @@ protected:
     LOG(error)
     LOG(critical)
 
+    void log_block(std::string win, std::string block)
+    {
+        info("{:-^30}", "");
+        info("<{}> {}", win, block);
+        info("{:-^30}", "");
+    }
+
+    void log_block(std::string block)
+    {
+        info("{:-^30}", "");
+        info("{}", block);
+        info("{:-^30}", "");
+    }
+
 private:
     static std::shared_ptr<spdlog::logger> s_logger;
 };
