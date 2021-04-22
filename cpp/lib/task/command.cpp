@@ -61,7 +61,7 @@ Command::FindLocRes Command::find_location(Window&             win,
         return FindLocRes{};
     } else {
         info("<{}> 找到目标图片，位置({}, {})", win.role_name(), location->x, location->y);
-        return FindLocRes{location, ist->width(), ist->height()};
+        return FindLocRes{location, ist->width(), ist->height(), ist->offset()};
     }
 }
 
@@ -80,11 +80,18 @@ bool ClickByImageCmd::execute(Window& win)
         return false;
     }
 
-    // 点击目标图片的中心
+    // 点击目标图片的中心或偏移位置
     // = 窗口偏移 + roi + location + 目标图片尺寸 / 2
     // ---------------------------------------------------------
-    int x = win.x() + m_roi.x + result.loc->x + result.width / 2;
-    int y = win.y() + m_roi.y + result.loc->y + result.height / 2;
+    int img_x = result.width / 2;
+    int img_y = result.height / 2;
+    if (result.offset) {
+        auto offset = result.offset.value();
+        img_x = offset.x;
+        img_y = offset.y;
+    }
+    int x = win.x() + m_roi.x + result.loc->x + img_x;
+    int y = win.y() + m_roi.y + result.loc->y + img_y;
     click(x, y);
 
     // 等待UI变化
@@ -123,9 +130,7 @@ bool ClickByPositionCmd::execute(Window& win)
 ///
 bool ConfirmImageCmd::execute(Window& win)
 {
-    // TODO logger, move to Command
-    std::printf("\t执行操作：%s\n", m_name);
-
+    // TODO add config confidence
     auto result = find_location(win, m_roi, m_targets);
     bool is_success = result.loc.has_value();
 

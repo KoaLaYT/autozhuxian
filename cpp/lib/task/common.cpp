@@ -146,12 +146,22 @@ namespace autozhuxian::common_task {
 ///
 /// 常用功能
 /// ---------------------------------------------------------
+/// 狂点ESC，最大程度关闭一些窗口或对话框
+///
+void press_esc()
+{
+    impl::repeat(5, impl::press_esc);
+}
+
+///
+/// 常用功能
+/// ---------------------------------------------------------
 /// 关闭所有的弹出框
 /// 用于登录后，关闭领取奖励和更新说明的弹框
 ///
 void close_all_ui(Window& win)
 {
-    impl::repeat(5, impl::press_esc);
+    press_esc();
     open_ui(win, UIType::Reward);
     impl::press_esc();
     open_ui(win, UIType::Update);
@@ -240,4 +250,4 @@ void activate(Window& win)
     std::this_thread::sleep_for(500ms);  // 确保真的调到了前台
 }
 
-};  // namespace autozhuxian
+};  // namespace autozhuxian::common_task

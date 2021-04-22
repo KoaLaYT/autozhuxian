@@ -12,6 +12,8 @@
 #include <window/window.hpp>
 #include <task/common.hpp>
 
+using namespace std::chrono_literals;
+
 namespace impl {
 ///
 /// 打印时间
@@ -52,7 +54,7 @@ public:
     // 0 表示成功
     // > 0 表示等待多少毫秒后重试
     //
-    virtual int run() = 0;
+    virtual int run(Window& win) = 0;
 };
 
 ///
@@ -89,12 +91,12 @@ public:
         // 尝试执行当前的命令流
         // ---------------------------------------------------------
         common_task::activate(m_win);
-        int  wait = m_strategies[m_state]->run();
+        int  wait = m_strategies[m_state]->run(m_win);
         auto t = std::chrono::system_clock::now() + std::chrono::milliseconds(wait);
 
         std::string status = wait == 0 ? "成功" : "失败";
         Logger<StatefulTask<State>>::info("<{}> [{}] {}，下次运行时间 {}",
-                                          m_win.role_name(), state_name(), status, time_to_str(t));
+                                          m_win.role_name(), state_name(), status, impl::time_to_str(t));
         // 进入下一阶段
         // ---------------------------------------------------------
         if (wait == 0) next_state();
@@ -183,7 +185,7 @@ public:
             // 根据最近值，停止当前线程
             // ---------------------------------------------------------
             if (next_round > std::chrono::system_clock::now()) {
-                Logger<Scheduler<StatefulTask>>::info("线程休眠至 {}", time_to_str(next_round));
+                Logger<Scheduler<StatefulTask>>::info("线程休眠至 {}", impl::time_to_str(next_round));
                 std::this_thread::sleep_until(next_round);
             }
         }
@@ -191,7 +193,7 @@ public:
 
 private:
     const char*                                               m_name;     // 任务名
-    typename StatefulTask::Timepoint                          m_endtime;  // 任务结束的时间
+    typename StatefulTask::TimePoint                          m_endtime;  // 任务结束的时间
     std::map<StatefulTask*, typename StatefulTask::TimePoint> m_tasks;    // 任务 -> 下次运行的时间
 };
 

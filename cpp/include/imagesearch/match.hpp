@@ -21,7 +21,7 @@ namespace autozhuxian {
 class ImageSearchTarget {
 public:
     // ---------------------------------------------------------
-    // Constructor：只包含target
+    // Constructor1：只包含target
     //
     ImageSearchTarget(const char* target) : m_mask{nullptr}
     {
@@ -30,7 +30,7 @@ public:
     }
 
     // ---------------------------------------------------------
-    // Constructor：包含target及其mask
+    // Constructor2：包含target及其mask
     //
     ImageSearchTarget(const char* target, const char* mask)
     {
@@ -38,6 +38,24 @@ public:
         check_path_valid(mask);
         m_target = target;
         m_mask = mask;
+    }
+
+    // ---------------------------------------------------------
+    // Constructor3：包含target，及其offset
+    //
+    ImageSearchTarget(const char* target, cv::Point offset)
+        : ImageSearchTarget{target}
+    {
+        m_offset = std::make_optional(offset);
+    }
+
+    // ---------------------------------------------------------
+    // Constructor4：包含target、mask和offset
+    //
+    ImageSearchTarget(const char* target, const char* mask, cv::Point offset)
+        : ImageSearchTarget{target, mask}
+    {
+        m_offset = std::make_optional(offset);
     }
 
     // ---------------------------------------------------------
@@ -50,6 +68,10 @@ public:
     // TODO check if target has been called!
     int width() { return m_width; }
     int height() { return m_height; }
+
+    // ---------------------------------------------------------
+    // target图片的偏移信息（点击时要加上去）
+    std::optional<cv::Point> offset() { return m_offset; }
 
     // ---------------------------------------------------------
     // 获取target图片的cv::Mat
@@ -68,10 +90,11 @@ public:
     cv::Mat mask() { return cv::imread(m_mask, cv::IMREAD_GRAYSCALE); }
 
 private:
-    const char* m_target;     // 目标图片的路径
-    const char* m_mask;       // 对应mask的路径
-    int         m_width{0};   // 图片的宽度
-    int         m_height{0};  // 图片的高度
+    const char*              m_target;                // 目标图片的路径
+    const char*              m_mask;                  // 对应mask的路径
+    int                      m_width{0};              // 图片的宽度
+    int                      m_height{0};             // 图片的高度
+    std::optional<cv::Point> m_offset{std::nullopt};  // 鼠标点击偏移的位置，空默认点击图片中心
 
     // ---------------------------------------------------------
     // 验证文件路径是否合法
@@ -106,7 +129,7 @@ public:
     explicit Matcher(const cv::Mat& source)
         : m_source{source},
           m_method{cv::TM_SQDIFF_NORMED},
-          m_confidence{0.99}
+          m_confidence{0.95}
     {}
 
     // ---------------------------------------------------------

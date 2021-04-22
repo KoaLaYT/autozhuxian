@@ -43,20 +43,28 @@ protected:
     /// 包括：
     /// 1. 可能找到的目标位置
     /// 2. 对应目标图片的尺寸信息 (如点击目标图片的中心）
+    /// 3. 点击时便宜的位置，空时默认为图片中心
     ///
     struct FindLocRes {
         std::optional<cv::Point> loc;
         int                      width;
         int                      height;
+        std::optional<cv::Point> offset;
 
         FindLocRes() : loc{std::nullopt},
                        width{0},
-                       height{0}
+                       height{0},
+                       offset{std::nullopt}
         {}
 
-        FindLocRes(std::optional<cv::Point> l, int w, int h) : loc{l},
-                                                               width{w},
-                                                               height{h}
+        FindLocRes(std::optional<cv::Point> l,
+                   int                      w,
+                   int                      h,
+                   std::optional<cv::Point> o)
+            : loc{l},
+              width{w},
+              height{h},
+              offset{o}
         {}
     };
 
@@ -132,6 +140,20 @@ public:
                           target,
                           wait}
     {}
+
+    // ---------------------------------------------------------
+    // Constructor5: 默认整个窗口都是搜索区域（单张图片，且带偏移量）
+    //
+    ClickByImageCmd(const char* name,
+                    const char* target,
+                    cv::Point   offset,
+                    int         wait)
+        : Command{name},
+          m_roi{RegionOfInterest::whole},
+          m_wait{wait}
+    {
+        m_targets.emplace_back(target, offset);
+    }
 
     // ---------------------------------------------------------
     // Destructor
