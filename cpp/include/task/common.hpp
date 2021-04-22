@@ -1,11 +1,11 @@
-#ifndef KOALAYT_COMMON_TASK_HPP_20210419
-#define KOALAYT_COMMON_TASK_HPP_20210419
+#ifndef KOALAYT_COMMON_HPP_20210419
+#define KOALAYT_COMMON_HPP_20210419
 
 #include <vector>
 // project
 #include <window/window.hpp>
 
-namespace autozhuxian::util {
+namespace autozhuxian::common_task {
 
 ///
 /// 常用的ui界面类型
@@ -73,6 +73,6 @@ std::vector<Window> find_all_zx_wins();
 ///
 void activate(Window& win);
 
-};  // namespace autozhuxian::util
+};  // namespace autozhuxian::common_task
 
 #endif

@@ -1,8 +1,8 @@
 // std
 #include <iostream>
 // project
-#include <util/common_task.hpp>
-#include <command/command.hpp>
+#include <task/common.hpp>
+#include <task/command.hpp>
 
 #define BASE "C:\\Users\\koalayt\\Desktop\\autozhuxian\\assets\\reward\\"
 #define PATH(p) BASE p
@@ -17,9 +17,9 @@ public:
         info("<{}> 开始领取奖励", win.role_name());
         info("{:-^30}", "");
 
-        util::activate(win);
-        util::close_all_ui(win);
-        util::open_ui(win, util::UIType::Reward);
+        common_task::activate(win);
+        common_task::close_all_ui(win);
+        common_task::open_ui(win, common_task::UIType::Reward);
 
         std::vector<std::unique_ptr<Command>> cmds;
         cmds.emplace_back(std::make_unique<ClickByImageCmd>("点击签到奖励",
@@ -38,13 +38,13 @@ public:
                                                             200));
         for (auto& cmd : cmds) cmd->execute(win);
 
-        util::close_ui(win, util::UIType::Reward);
+        close_ui(win, common_task::UIType::Reward);
     }
 };
 
 int main()
 {
-    auto       wins = util::find_all_zx_wins();
+    auto       wins = common_task::find_all_zx_wins();
     RewardTask task;
 
     for (auto& win : wins) {

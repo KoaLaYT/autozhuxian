@@ -4,7 +4,6 @@
 #include <cstdio>
 // project
 #include <control/control.hpp>
-#include <command/command.hpp>
 #include "task.hpp"
 #include "macro.hpp"
 

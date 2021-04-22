@@ -4,5 +4,4 @@ target_link_libraries(reward PRIVATE
                         window 
                         control 
                         imagesearch 
-                        "command" 
-                        util)
+                        task)

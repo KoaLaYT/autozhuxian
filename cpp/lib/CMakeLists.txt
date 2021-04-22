@@ -1,7 +1,6 @@
 add_subdirectory(window)
 add_subdirectory(control)
 add_subdirectory(imagesearch)
-add_subdirectory("command")
-add_subdirectory(util)
+add_subdirectory(task)
 add_subdirectory("macro")
 add_subdirectory(logger)

@@ -1,7 +1,7 @@
 // std
 #include <thread>
 // project
-#include <command/command.hpp>
+#include <task/command.hpp>
 #include <control/control.hpp>
 #include <imagesearch/screenshot.hpp>
 #include <imagesearch/match.hpp>

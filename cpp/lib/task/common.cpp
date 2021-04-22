@@ -4,9 +4,9 @@
 #include <chrono>
 #include <map>
 // project
-#include <util/common_task.hpp>
+#include <task/common.hpp>
+#include <task/command.hpp>
 #include <control/control.hpp>
-#include <command/command.hpp>
 #include <macro/assert.hpp>
 
 #define BASE "C:\\Users\\koalayt\\Desktop\\autozhuxian\\assets\\common\\"
@@ -141,7 +141,7 @@ static BOOL CALLBACK EnumWindowCb(HWND hwnd, LPARAM lParam)
 // ---------------------------------DIVIDER--------------------------------------- //
 // ------------------------------------------------------------------------------- //
 
-namespace autozhuxian::util {
+namespace autozhuxian::common_task {
 
 ///
 /// 常用功能
@@ -240,4 +240,4 @@ void activate(Window& win)
     std::this_thread::sleep_for(500ms);  // 确保真的调到了前台
 }
 
-};  // namespace autozhuxian::util
+};  // namespace autozhuxian
