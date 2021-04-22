@@ -138,13 +138,13 @@ public:
     // ---------------------------------------------------------
     // Constructor: 每个窗口绑定一个StatefulTask
     //
-    Scheduler(const char*                      name,
-              typename StatefulTask::Timepoint endtime,
-              std::vector<Window>&             wins)
-        : m_name{name},
-          m_endtime{endtime}
+    Scheduler(const char*          name,
+              int                  duration,  // 任务持续的时间（单位：分）
+              std::vector<Window>& wins)
+        : m_name{name}
     {
         auto now = std::chrono::system_clock::now();
+        m_endtime = now + std::chrono::minutes(duration);
         for (auto& win : wins) {
             auto task = new StatefulTask{win};
             m_tasks[task] = now;
