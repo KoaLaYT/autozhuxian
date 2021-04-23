@@ -129,7 +129,7 @@ public:
     explicit Matcher(const cv::Mat& source)
         : m_source{source},
           m_method{cv::TM_SQDIFF_NORMED},
-          m_confidence{0.95}
+          m_confidence{0.96}
     {}
 
     // ---------------------------------------------------------
