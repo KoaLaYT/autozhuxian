@@ -134,19 +134,25 @@ public:
     {
         std::vector<std::unique_ptr<Command>> cmds;
         cmds.emplace_back(std::make_unique<ClickByImageCmd>("点击永恒之境",
-                                                            PATH("new_1.png"),
+                                                            PATH("new_1_1.png"),
                                                             1000));
         cmds.emplace_back(std::make_unique<ClickByImageCmd>("打开房间",
-                                                            PATH("new_2.png"),
+                                                            PATH("new_1_2.png"),
                                                             cv::Point{13, 113},
                                                             1000));
-        // TODO 点击报名
-
+        cmds.emplace_back(std::make_unique<ClickByImageCmd>("开始匹配",
+                                                            PATH("new_1_3.png"),
+                                                            1000));
+        bool success = false;
+        common_task::press_esc();
         common_task::open_ui(win, common_task::UIType::PVP);
-        for (auto& cmd : cmds)
-            cmd->execute(win);
-
-        return 0;
+        for (auto& cmd : cmds) {
+            success = cmd->execute(win);
+            if (!success) break;
+        }
+        // 失败后把执行权让给其他窗口
+        // 避免这个窗口一直失败，导致别的窗口无法正常运行
+        return success ? 0 : 1000;
     }
 };
 
@@ -155,7 +161,15 @@ class EnteringStrategy : public Strategy {
 public:
     int run(Window& win) override
     {
-        return 0;
+        ConfirmImageCmd cmd{"是否进入战场", PATH("new_2_1.png")};
+
+        common_task::press_esc();
+        press(0x4D);  // M
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        auto found = cmd.execute(win);
+        common_task::press_esc();
+
+        return found ? 0 : 10'000;
     }
 };
 
@@ -172,7 +186,7 @@ public:
         auto found = cmd.execute(win);
         common_task::press_esc();
 
-        return found ? 0 : 5000;
+        return found ? 0 : 15'000;
     }
 };
 
@@ -213,7 +227,8 @@ int main()
 {
     auto wins = common_task::find_all_zx_wins();
 
-    Scheduler<old66::Task> scheduler("群雄逐鹿", 120, wins);
+    // Scheduler<old66::Task> scheduler{"群雄逐鹿", 120, wins};
+    Scheduler<new66::Task> scheduler{"永恒之境", 120, wins};
     scheduler.run();
 
     return 0;
