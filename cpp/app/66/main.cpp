@@ -233,10 +233,10 @@ int main()
     // 2,4,6是新66
     // ---------------------------------------------------------
     if (weekday % 2 == 0) {
-        Scheduler<new66::Task> scheduler{"永恒之境", 120, wins};
+        Scheduler<new66::Task> scheduler{"永恒之境", 118, wins};
         scheduler.run();
     } else {
-        Scheduler<old66::Task> scheduler{"群雄逐鹿", 120, wins};
+        Scheduler<old66::Task> scheduler{"群雄逐鹿", 118, wins};
         scheduler.run();
     }
 
