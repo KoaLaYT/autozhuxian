@@ -11,6 +11,8 @@
 
 using namespace autozhuxian;
 
+// TODO refactor: old and new logic almost same
+
 namespace old66 {
 
 // 老66的三种状态
@@ -226,10 +228,17 @@ private:
 int main()
 {
     auto wins = common_task::find_all_zx_wins();
+    int  weekday = common_task::get_weekday();
 
-    // Scheduler<old66::Task> scheduler{"群雄逐鹿", 120, wins};
-    Scheduler<new66::Task> scheduler{"永恒之境", 120, wins};
-    scheduler.run();
+    // 2,4,6是新66
+    // ---------------------------------------------------------
+    if (weekday % 2 == 0) {
+        Scheduler<new66::Task> scheduler{"永恒之境", 120, wins};
+        scheduler.run();
+    } else {
+        Scheduler<old66::Task> scheduler{"群雄逐鹿", 120, wins};
+        scheduler.run();
+    }
 
     return 0;
 }
