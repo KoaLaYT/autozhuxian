@@ -155,7 +155,6 @@ int get_weekday()
     std::time_t t = std::chrono::system_clock::to_time_t(now);
     std::tm*    tm = std::localtime(&t);
     int         weekday = tm->tm_wday;
-    delete tm;
     return weekday == 0 ? 7 : weekday;
 }
 
