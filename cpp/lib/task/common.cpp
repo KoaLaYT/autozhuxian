@@ -3,6 +3,7 @@
 #include <thread>
 #include <chrono>
 #include <map>
+#include <ctime>
 // project
 #include <task/common.hpp>
 #include <task/command.hpp>
@@ -142,6 +143,21 @@ static BOOL CALLBACK EnumWindowCb(HWND hwnd, LPARAM lParam)
 // ------------------------------------------------------------------------------- //
 
 namespace autozhuxian::common_task {
+
+///
+/// 常用功能
+/// ---------------------------------------------------------
+/// 获取今天是星期几
+///
+int get_weekday()
+{
+    auto        now = std::chrono::system_clock::now();
+    std::time_t t = std::chrono::system_clock::to_time_t(now);
+    std::tm*    tm = std::localtime(&t);
+    int         weekday = tm->tm_wday;
+    delete tm;
+    return weekday == 0 ? 7 : weekday;
+}
 
 ///
 /// 常用功能
