@@ -105,7 +105,7 @@ void LaunchTask::run()
     }
     ClickByImageCmd cmd{
         "点击开始多开游戏",
-        RegionOfInterest{0, 0, 621, 334},
+        RegionOfInterest{0, 0, 621, 668},
         PATH("multistart.png"),
         60'000,
     };
