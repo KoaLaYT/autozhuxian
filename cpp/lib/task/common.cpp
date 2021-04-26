@@ -4,6 +4,7 @@
 #include <chrono>
 #include <map>
 #include <ctime>
+#include <cmath>
 // project
 #include <task/common.hpp>
 #include <task/command.hpp>
@@ -18,6 +19,66 @@
 using namespace std::chrono_literals;
 
 namespace impl {
+
+///
+/// 输入一串按键
+/// ---------------------------------------------------------
+///
+///
+static void input(std::vector<DWORD>& keycodes)
+{
+    for (auto keycode : keycodes) {
+        autozhuxian::press(keycode);
+        std::this_thread::sleep_for(200ms);
+    }
+}
+
+///
+/// 获取数字num的长度
+/// ---------------------------------------------------------
+///
+///
+static int get_num_len(int num)
+{
+    int tens = 0;
+    while (num >= 10) {
+        tens++;
+        num /= 10;
+    }
+    return tens;
+}
+
+///
+/// 输入一个数字
+/// ---------------------------------------------------------
+/// 将数字转换成对应的按键
+///
+static void input(int num)
+{
+    std::vector<DWORD> keycodes;
+
+    for (int len = get_num_len(num); len >= 0; --len) {
+        int num_digits = std::pow(10, len);
+        int digit = num / num_digits;
+        keycodes.push_back(digit + 0x30);
+        num -= digit * num_digits;
+    }
+
+    input(keycodes);
+}
+
+///
+/// 输入一个坐标
+/// ---------------------------------------------------------
+/// 将坐标转换成对应的按键
+///
+static void input(cv::Point location)
+{
+    input(location.x);
+    autozhuxian::press(VK_OEM_COMMA);
+    std::this_thread::sleep_for(200ms);
+    input(location.y);
+}
 
 ///
 /// 反复运行某个lambda
@@ -143,6 +204,32 @@ static BOOL CALLBACK EnumWindowCb(HWND hwnd, LPARAM lParam)
 // ------------------------------------------------------------------------------- //
 
 namespace autozhuxian::common_task {
+
+///
+/// 常用功能
+/// ---------------------------------------------------------
+/// 移动到某一坐标
+///
+void move_to(Window& win, cv::Point location)
+{
+    activate(win);
+
+    ClickByImageCmd cmd{"点击输入框",
+                        PATH("map_input.png"),
+                        cv::Point{0, 32},  // TODO move right
+                        500};
+    do {
+        press_esc();
+        press(0x4D);  // M
+        std::this_thread::sleep_for(500ms);
+    } while (!cmd.execute(win));
+
+    // TODO delete last input location
+
+    impl::input(location);
+
+    // TODO click move and delete
+}
 
 ///
 /// 常用功能
