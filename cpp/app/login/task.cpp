@@ -26,7 +26,7 @@ LoginTask::LoginTask()
         "选择服务器",
         RegionOfInterest{400, 0, 800, 1024},
         PATH("confirm.png"),
-        2'000));
+        10'000));  // 进入角色选择会卡一下
 
     m_cmds.emplace_back(std::make_unique<ClickByPositionCmd>(
         "进入游戏",
