@@ -206,7 +206,7 @@ static BOOL CALLBACK EnumWindowCb(HWND hwnd, LPARAM lParam)
 namespace autozhuxian::common_task {
 
 ///
-/// 常用功能
+/// 常用功能 // TODO refactor
 /// ---------------------------------------------------------
 /// 移动到某一坐标
 ///
@@ -214,21 +214,57 @@ void move_to(Window& win, cv::Point location)
 {
     activate(win);
 
-    ClickByImageCmd cmd{"点击输入框",
-                        PATH("map_input.png"),
-                        cv::Point{0, 32},  // TODO move right
-                        500};
-    do {
-        press_esc();
-        press(0x4D);  // M
-        std::this_thread::sleep_for(500ms);
-    } while (!cmd.execute(win));
-
-    // TODO delete last input location
-
-    impl::input(location);
-
-    // TODO click move and delete
+    // 打开地图，并且激活输入框
+    {
+        ClickByImageCmd cmd{"点击输入框",
+                            PATH("map_input.png"),
+                            cv::Point{100, 32},
+                            500};
+        do {
+            press_esc();
+            press(0x4D);  // M
+            std::this_thread::sleep_for(500ms);
+        } while (!cmd.execute(win));
+    }
+    // 输入坐标
+    {
+        impl::repeat(10, []() { press(VK_BACK); });
+        impl::input(location);
+    }
+    // 把坐标存入
+    {
+        ClickByImageCmd cmd{"点击箭头",
+                            PATH("map_input.png"),
+                            cv::Point{141, 33},
+                            500};
+        cmd.execute(win);
+        press(0x30);
+    }
+    {
+        ClickByImageCmd cmd{"确认坐标",
+                            PATH("map_input_confirm.png"),
+                            500};
+        cmd.execute(win);
+    }
+    // 移动
+    {
+        ClickByImageCmd cmd{"移动",
+                            PATH("map_input.png"),
+                            cv::Point{126, 177},
+                            500};
+        cmd.execute(win);
+    }
+    // 删除坐标
+    {
+        ClickByImageCmd cmd{"删除坐标",
+                            PATH("map_input.png"),
+                            cv::Point{60, 177},
+                            500};
+        cmd.execute(win);
+        impl::repeat(5, []() { press(VK_RETURN); });
+    }
+    // 关闭窗口
+    press_esc();
 }
 
 ///
