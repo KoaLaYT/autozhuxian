@@ -107,7 +107,7 @@ void LaunchTask::run()
         "点击开始多开游戏",
         RegionOfInterest{0, 0, 621, 668},
         PATH("multistart.png"),
-        60'000,
+        120'000,  // 三个号需要的时间长点
     };
     cmd.execute(sub_win.value());
 }
