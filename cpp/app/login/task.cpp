@@ -151,7 +151,5 @@ void LaunchTask::open_platform()
 
     // 执行操作
     // ---------------------------------------------------------
-    if (!cmd.execute(desktop)) {
-        throw std::runtime_error{"启动诛仙3失败"};
-    }
+    cmd.execute(desktop);
 }
