@@ -23,11 +23,12 @@ namespace impl {
 template <typename T>
 std::string time_to_str(const std::chrono::time_point<T>& time)
 {
-    auto     c_t = std::chrono::system_clock::to_time_t(time);
-    std::tm* tm = std::localtime(&c_t);
+    auto    c_t = std::chrono::system_clock::to_time_t(time);
+    std::tm temp;
+    ::localtime_s(&temp, &c_t);
 
     std::ostringstream oss;
-    oss << std::put_time(tm, "%F %T");
+    oss << std::put_time(&temp, "%F %T");
     return oss.str();
 }
 

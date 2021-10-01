@@ -164,7 +164,7 @@ static RoleInfo get_role_name(autozhuxian::RoleType type)
     using namespace autozhuxian;
     static std::map<RoleType, RoleInfo> infos{
         {RoleType::HeHuan, {PATH("hehuan.png"), "合欢"}},
-        {RoleType::PoJun, {PATH("pojun.png"), "破军"}},
+        {RoleType::YingZhao, {PATH("yingzhao.png"), "英招"}},
     };
     auto found = infos.find(type);
     AUTOZHUXIAN_ASSERT(found != infos.end(), "未定义的类型");
